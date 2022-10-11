@@ -4,27 +4,29 @@
 
 data::data()
 {
-
+  fileZip = std::ofstream(pathOfZip.toStdString(),std::ios_base::binary | std::ios_base::in);
 }
 
-void data::writeHeader(QString header, std::ofstream file){
+void data::writeHeader(QString header){
   if(header.size()==0){
     std::cout << "header.size==0(toZipData.cpp)" << std::endl;
     exit(0);
   }
   char config = (header.toStdString())[0];
+  fileZip = std::ofstream(pathOfZip.toStdString(),std::ios_base::binary | std::ios_base::in);
+
   switch(config){
   case 'c':
     writeCFH(fileZip);
     break;
   case 'd':
-    writeDD(file);
+    writeDD(fileZip);
     break;
   case 'l':
-    writeLFH(file);
+    writeLFH(fileZip);
     break;
   case 'e':
-    writeEOCD(file);
+    writeEOCD(fileZip);
     break;
   }
 }

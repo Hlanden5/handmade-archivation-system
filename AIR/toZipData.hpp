@@ -10,7 +10,9 @@ class data : private structs
     QString pathOfZip;
     std::vector<QString> pathOfFiles;
     std::ofstream fileZip;
+
 public:
+
     data();
 
     data(std::string &path);
@@ -21,6 +23,6 @@ public:
 
     void loadData();
 
-    void writeHeader(QString header,std::ofstream file);
+    void writeHeader(QString header);
 };
 

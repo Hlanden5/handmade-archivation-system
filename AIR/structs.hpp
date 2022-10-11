@@ -60,21 +60,23 @@ struct endOfCentralDirectory{
 
 class structs
 {
+protected:
   struct CentralFileHeader *cfh;
   struct dataDescriptor *dd;
   struct localFileHeader *lfh;
   struct endOfCentralDirectory *eocd;
+
+  void writeCFH(std::ofstream &file);
+
+  void writeDD(std::ofstream &file);
+
+  void writeLFH(std::ofstream &file);
+
+  void writeEOCD(std::ofstream &file);
 public:
+
   structs();
 
   ~structs();
-
-  void writeCFH(std::ofstream file);
-
-  void writeDD(std::ofstream file);
-
-  void writeLFH(std::ofstream file);
-
-  void writeEOCD(std::ofstream file);
 };
 
