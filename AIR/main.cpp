@@ -4,5 +4,5 @@
 
 int main()
 {
-    return 255;
+    return 1;
 }
