@@ -1,8 +1,7 @@
 #include <iostream>
-
 #include "toZipData.hpp"
 
 int main()
 {
-    return 1;
+    return 25;
 }
