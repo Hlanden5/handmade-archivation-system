@@ -4,7 +4,7 @@
 #include <QString>
 
 struct CentralFileHeader{
-  const quint32 cfh_signatqure = 0x02014b50;
+  const quint32 cfh_signature = 0x02014b50;
   quint16 versionDone;
   quint16 neededVersion;
   quint16 flag;
@@ -18,8 +18,8 @@ struct CentralFileHeader{
   quint16 additionalSizeof;
   quint16 sizeofComment;
   quint16 numberOfDrive;
-  quint16 internalAttribqutes;
-  quint32 externalAttribqutes;
+  quint16 internalAttributes;
+  quint32 externalAttributes;
   quint32 offset;
   QString nameOfFile;
   QString comment;

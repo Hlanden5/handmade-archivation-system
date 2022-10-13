@@ -16,16 +16,17 @@ public:
 
     data();
 
-    data(std::string &path);
+    ~data();
 
-    data(QString &path);
+    void setPathOfFiles(std::vector<QString> pathOfFiles);
 
-    void compess(bool isDeflate=0);
+    void setPathOfZip(QString pathOfZip);
 
-    void collectData();
+    void compess(bool isDeflate = 0);
 
-    void loadData();
+    void collectAndLoadData();
 
     void writeHeader(QString header);
+
 };
 
