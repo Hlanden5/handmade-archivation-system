@@ -25,11 +25,13 @@ struct CentralFileHeader{
   QString comment;
 };
 
+/*
 struct dataDescriptor{
   qint64 CRC_32;
   qint64 compressSize;
   qint64 unCompressSize;
 };
+*/
 
 struct localFileHeader{
   const quint32 lfh_signature = 0x04034b50;
@@ -68,7 +70,7 @@ protected:
 
   void writeCFH(std::ofstream &file);
 
-  void writeDD(std::ofstream &file);
+  //void writeDD(std::ofstream &file);
 
   void writeLFH(std::ofstream &file);
 

@@ -4,7 +4,7 @@
 structs::structs()
 {
   cfh = new CentralFileHeader;
-  dd = new dataDescriptor;
+  //dd = new dataDescriptor;
   lfh = new localFileHeader;
   eocd = new endOfCentralDirectory;
 }
@@ -20,11 +20,11 @@ void structs::writeCFH(std::ofstream &file){
 
 }
 
-void structs::writeDD(std::ofstream &file){
+/*void structs::writeDD(std::ofstream &file){
   file.write((char*)dd->CRC_32,sizeof(dd->CRC_32));
   file.write((char*)dd->compressSize,sizeof(dd->compressSize));
   file.write((char*)dd->unCompressSize,sizeof(dd->unCompressSize));
-}
+}*/
 
 void structs::writeLFH(std::ofstream &file){
 

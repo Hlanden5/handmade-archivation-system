@@ -10,6 +10,7 @@ class data : private structs
     QString pathOfZip;
     std::vector<QString> pathOfFiles;
     std::ofstream fileZip;
+    structs *headerArray;
 
 public:
 
@@ -20,6 +21,8 @@ public:
     data(QString &path);
 
     void compess(bool isDeflate=0);
+
+    void collectData();
 
     void loadData();
 
