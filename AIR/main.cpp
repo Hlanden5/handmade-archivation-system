@@ -1,7 +1,13 @@
 #include <iostream>
-#include "toZipData.hpp"
+#include <stdio.h>
+#include <string>
+#include <QByteArray>
+#include <fstream>
+#include <QDir>
+
+using namespace std;
 
 int main()
 {
-    return 25;
+  return 0;
 }
