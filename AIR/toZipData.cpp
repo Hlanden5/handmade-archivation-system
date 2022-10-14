@@ -1,6 +1,4 @@
 #include "toZipData.hpp"
-#include <iostream>
-#include <fstream>
 
 data::data()
 {

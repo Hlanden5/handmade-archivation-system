@@ -1,9 +1,5 @@
 #pragma once
 
-#include <cstring>
-#include <QByteArray>
-#include <windows.h>
-
 #define UPDC32(octet,crc) (crc_32_tab[((crc)\
   ^ ((BYTE)octet)) & 0xff] ^ ((crc) >> 8))
 

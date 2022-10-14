@@ -1,7 +1,3 @@
-#include <string>
-#include <QByteArray>
-#include <fstream>
-
 #include "crc.hpp"
 
 /**********************************************************************\

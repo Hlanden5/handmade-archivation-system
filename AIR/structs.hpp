@@ -1,7 +1,5 @@
 #pragma once
 
-#include "qglobal.h"
-#include <QString>
 
 struct CentralFileHeader{
   const quint32 cfh_signature = 0x02014b50;

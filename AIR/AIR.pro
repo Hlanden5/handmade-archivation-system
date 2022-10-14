@@ -2,6 +2,9 @@ QT -= gui
 
 CONFIG += c++17 console
 CONFIG -= app_bundle
+CONFIG += precompile_header
+PRECOMPILED_HEADER = pre_compiled.hpp
+HEADERS += pre_compiled.hpp
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -21,6 +24,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     crc.hpp \
+    pre_compiled.hpp \
     structs.hpp \
     toZipData.hpp \
     tounzipdata.hpp

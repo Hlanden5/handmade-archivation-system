@@ -1,8 +1,5 @@
 #pragma once
 
-#include <QByteArray>
-#include <QString>
-#include <fstream>
 #include "structs.hpp"
 
 class data : private structs
