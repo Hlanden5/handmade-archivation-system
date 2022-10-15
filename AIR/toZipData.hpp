@@ -2,18 +2,18 @@
 
 #include "structs.hpp"
 
-class data : private structs
+class data_ : private structs
 {
     QString pathOfZip;
     std::vector<QString> pathOfFiles;
     std::ofstream fileZip;
-    structs *headerArray;
+    std::vector<structs> headerArray;
 
 public:
 
-    data();
+    data_();
 
-    ~data();
+    ~data_();
 
     void setPathOfFiles(std::vector<QString> pathOfFiles);
 
@@ -23,7 +23,6 @@ public:
 
     void collectAndLoadData();
 
-    void writeHeader(QString header);
-
+    void writeHeader(QString headerfilepath);
 };
 
