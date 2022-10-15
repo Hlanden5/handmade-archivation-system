@@ -60,7 +60,7 @@ struct endOfCentralDirectory{
 
 class structs
 {
-protected:
+public:
   struct CentralFileHeader *cfh;
   struct dataDescriptor *dd;
   struct localFileHeader *lfh;

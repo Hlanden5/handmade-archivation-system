@@ -9,4 +9,5 @@
 #include <fstream>
 #include <iostream>
 #include <QDir>
+#include <vector>
 #endif
