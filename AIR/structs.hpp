@@ -73,6 +73,26 @@ public:
   void writeLFH(std::ofstream &file);
 
   void writeEOCD(std::ofstream &file);
+
+  void writeLE(std::ofstream &file,quint16 data){
+    quint8 bytes[2];
+      bytes[0] = (data&0x000000FF);
+      bytes[1] = (data&0x0000FF00)>>8;
+      file.write(bytes[1],sizeof(char));
+      file.write(bytes[0],sizeof(char));
+  }
+
+  void writeLE(std::ofstream &file,quint32 data){
+    quint8 bytes[4];
+      bytes[0] = (data&0x000000FF);
+      bytes[1] = (data&0x0000FF00)>>8;
+      bytes[2] = (data&0x0000FF00)>>8;
+      bytes[3] = (data&0x0000FF00)>>8;
+      file.write((char*)bytes[3],sizeof(char));
+      file.write(bytes[2],sizeof(char));
+      file.write(bytes[1],sizeof(char));
+      file.write(bytes[0],sizeof(char));
+  }
 public:
 
   structs();
