@@ -1,6 +1,7 @@
 #include "structs.hpp"
 
-#define LE(x) (qFromBigEndian(x))
+#define LE(x) (qFromLittleEndian(x))
+#define BE(x) (qFromBigEndian(x))
 
 structs::structs()
 {
@@ -20,58 +21,64 @@ structs::~structs(){
 void structs::writeCFH(std::ofstream &file){
   QByteArray dataHeader;
   QDataStream stream(&dataHeader, QIODevice::WriteOnly);
-  stream << LE(cfh->versionDone);
+  stream << BE(cfh->cfh_signature);
   stream << LE(cfh->neededVersion);
   stream << LE(cfh->flag);
   stream << LE(cfh->methodOfCompress);
   stream << LE(cfh->timeOfLastEdit);
   stream << LE(cfh->dataOfLastEdit);
-  stream << LE(cfh->CRC_32_uncompress);
-  stream << LE(cfh->compressSize);
-  stream << LE(cfh->nonCompressSize);
+  stream << BE(cfh->CRC_32_uncompress);
+  stream << BE(cfh->compressSize);
+  stream << BE(cfh->nonCompressSize);
   stream << LE(cfh->sizeofNameFile);
   stream << LE(cfh->additionalSizeof);
   stream << LE(cfh->sizeofComment);
   stream << LE(cfh->numberOfDrive);
   stream << LE(cfh->internalAttributes);
-  stream << LE(cfh->externalAttributes);
-  stream << LE(cfh->offset);
+  stream << BE(cfh->externalAttributes);
+  stream << BE(cfh->offset);
   dataHeader += cfh->nameOfFile;
   dataHeader += cfh->comment;
-  file.write((char*)&dataHeader,dataHeader.size());
+  //test
+  stream << BE(0x05054b50);
+  stream << BE(cfh->compressSize);
+  for(const auto &c:qAsConst(dataHeader))
+    file << c;
 }
 
 void structs::writeLFH(std::ofstream &file){
   QByteArray dataHeader;
   QDataStream stream(&dataHeader, QIODevice::WriteOnly);
-  stream << lfh->lfh_signature;
+  stream << qFromBigEndian(lfh->lfh_signature);
   stream << LE(lfh->neededVersion);
   stream << LE(lfh->flag);
   stream << LE(lfh->methodOfCompress);
   stream << LE(lfh->timeOfLastEdit);
   stream << LE(lfh->dataOfLastEdit);
-  stream << LE(lfh->CRC_32_uncompress);
-  stream << LE(lfh->compressSize);
-  stream << LE(lfh->nonCompressSize);
-  stream << LE(lfh->sizeofNameFile);
+  stream << BE(lfh->CRC_32_uncompress);
+  stream << BE(lfh->compressSize);
+  stream << BE(lfh->nonCompressSize);
+  stream << BE(lfh->sizeofNameFile);
   stream << LE(lfh->additionalSizeof);
   dataHeader += lfh->nameOfFile;
-  file.write((char*)&dataHeader,dataHeader.size());
+  for(const auto &c:qAsConst(dataHeader))
+    file << c;
 }
 
 void structs::writeEOCD(std::ofstream &file){
   QByteArray dataHeader;
   QDataStream stream(&dataHeader, QIODevice::WriteOnly);
-  stream << LE(eocd->eocd_signature);
+  stream << qFromBigEndian(eocd->eocd_signature);
   stream << LE(eocd->numberOfDrive);
   stream << LE(eocd->numberOfDriveCFH);
   stream << LE(eocd->countOfCFH_onThisDrive);
   stream << LE(eocd->countOfCFH);
-  stream << LE(eocd->sizeofCFH);
-  stream << LE(eocd->offsetCFH_ofStartArchive);
+  stream << BE(eocd->sizeofCFH);
+  stream << BE(eocd->offsetCFH_ofStartArchive);
   stream << LE(eocd->sizeofComment);
   dataHeader += eocd->comment;
-  file.write((char*)&dataHeader,dataHeader.size());
+  for(const auto &c:qAsConst(dataHeader))
+    file << c;
 }
 
 /*void structs::writeDD(std::ofstream &file){

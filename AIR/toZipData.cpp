@@ -58,7 +58,7 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
     iter->lfh->CRC_32_uncompress = crc32File(pathOfFiles[i].toStdString(),size,data);
     iter->lfh->compressSize = size;// needs further implementation
     iter->lfh->nonCompressSize = size;
-    iter->lfh->sizeofNameFile = pathOfFiles[i].toStdString().size(); // needs parsing
+    iter->lfh->sizeofNameFile = 9; // needs parsing
     iter->lfh->additionalSizeof = 0; // needs further implementation
     iter->lfh->nameOfFile = "input.txt";
 
@@ -74,32 +74,29 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
     iter->cfh->additionalSizeof = iter->lfh->additionalSizeof;
     iter->cfh->nameOfFile = iter->lfh->nameOfFile;
     iter->cfh->sizeofComment = 0; // needs further implementation
-    iter->cfh->numberOfDrive = 0; // maybe needs further implementation
+    iter->cfh->numberOfDrive = 1; // maybe needs further implementation
     iter->cfh->internalAttributes = 0; // needs further implementation
     iter->cfh->externalAttributes = 0;// needs further implementation
-    iter->cfh->offset = 0; // needs further implementation
+    iter->cfh->offset = sizeof(lfh)+iter->cfh->compressSize+iter->cfh->sizeofNameFile; // needs further implementation
     iter->cfh->comment = ""; // needs further implementation
 
     iter->eocd->numberOfDrive = iter->cfh->numberOfDrive;
     iter->eocd->numberOfDriveCFH = 0; // needs further implementation
     iter->eocd->countOfCFH_onThisDrive = 0; // needs further implementation
-    iter->eocd->countOfCFH = 0; // needs further implementation
+    iter->eocd->countOfCFH = 1; // needs further implementation
     iter->eocd->sizeofCFH = sizeof(cfh)*iter->eocd->countOfCFH; // needs further implementation
-    iter->eocd->offsetCFH_ofStartArchive = 0; // needs further implementation
+    iter->eocd->offsetCFH_ofStartArchive = sizeof(lfh)+iter->cfh->compressSize+iter->cfh->sizeofNameFile; // needs further implementation
     iter->eocd->sizeofComment = 0; // needs further implementation
     iter->eocd->comment = ""; // needs further implementation
 
     iter->writeLFH(fileZip);
+    for(const auto&c:qAsConst(data))
+        fileZip << c;
 
-
-//      std::string x = QString(data).toStdString();
-//      fileZip << x.size();
-//      fileZip.write((char*)x.c_str(),x.size());
-
-//    iter->writeCFH(fileZip);
-//    fileZip << 0x05054b50;
-//    fileZip << x.size();
-//    iter->writeEOCD(fileZip);
+    iter->writeCFH(fileZip);
+//    fileZip << q0x05054b50;
+//    fileZip << data.size()/8;
+    iter->writeEOCD(fileZip);
   }
   fileZip.close();
 }
