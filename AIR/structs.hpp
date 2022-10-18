@@ -1,6 +1,5 @@
 #pragma once
 
-
 struct CentralFileHeader{
   const quint32 cfh_signature = 0x02014b50;
   quint16 versionDone;
@@ -19,8 +18,8 @@ struct CentralFileHeader{
   quint16 internalAttributes;
   quint32 externalAttributes;
   quint32 offset;
-  QString nameOfFile;
-  QString comment;
+  std::string nameOfFile;
+  std::string comment;
 };
 
 /*
@@ -43,7 +42,7 @@ struct localFileHeader{
   quint32 nonCompressSize;
   quint16 sizeofNameFile;
   quint16 additionalSizeof;
-  QString nameOfFile;
+  std::string nameOfFile;
 };
 
 struct endOfCentralDirectory{
@@ -55,14 +54,14 @@ struct endOfCentralDirectory{
   quint32 sizeofCFH; // bytes
   quint32 offsetCFH_ofStartArchive;
   qint16 sizeofComment;
-  QString comment;
+  std::string comment;
 };
 
 class structs
 {
 public:
   struct CentralFileHeader *cfh;
-  struct dataDescriptor *dd;
+  //struct dataDescriptor *dd;
   struct localFileHeader *lfh;
   struct endOfCentralDirectory *eocd;
 
@@ -74,25 +73,9 @@ public:
 
   void writeEOCD(std::ofstream &file);
 
-  void writeLE(std::ofstream &file,quint16 data){
-    quint8 bytes[2];
-      bytes[0] = (data&0x000000FF);
-      bytes[1] = (data&0x0000FF00)>>8;
-      file.write(bytes[1],sizeof(char));
-      file.write(bytes[0],sizeof(char));
-  }
+  void writeLE(std::ofstream &file,quint16 data);
 
-  void writeLE(std::ofstream &file,quint32 data){
-    quint8 bytes[4];
-      bytes[0] = (data&0x000000FF);
-      bytes[1] = (data&0x0000FF00)>>8;
-      bytes[2] = (data&0x0000FF00)>>8;
-      bytes[3] = (data&0x0000FF00)>>8;
-      file.write((char*)bytes[3],sizeof(char));
-      file.write(bytes[2],sizeof(char));
-      file.write(bytes[1],sizeof(char));
-      file.write(bytes[0],sizeof(char));
-  }
+  void writeLE(std::ofstream &file,quint32 data);
 public:
 
   structs();

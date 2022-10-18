@@ -10,4 +10,6 @@
 #include <iostream>
 #include <QDir>
 #include <vector>
+#include <bitset>
+#include <QtEndian>
 #endif

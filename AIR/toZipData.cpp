@@ -41,18 +41,18 @@ void data_::setPathOfFiles(std::vector<QString> pathOfFiles){
 
 void data_::setPathOfZip(QString pathOfZip){
   this->pathOfZip = pathOfZip;
-  fileZip = std::ofstream(pathOfZip.toStdString(),std::ios_base::binary | std::ios_base::out);
+  fileZip = std::ofstream(pathOfZip.toStdString(),std::ios_base::binary | std::ios_base::out | std::ios_base::trunc);
 }
 
 void data_::collectAndLoadData(){ // tmp realisation, needs repair
   std::vector<structs>::iterator iter = headerArray.begin();
   for(size_t i=0;i<pathOfFiles.size();i++,iter++){
     /*if(directory)*/
-    iter->lfh->neededVersion = 1.0;
+    iter->lfh->neededVersion = 0x0A00;
     iter->lfh->flag = 0;
     iter->lfh->methodOfCompress = 0;
-    iter->lfh->timeOfLastEdit = 0;// needs further implementation
-    iter->lfh->dataOfLastEdit = 0;// needs further implementation
+    iter->lfh->timeOfLastEdit = 0xA972;// needs further implementation
+    iter->lfh->dataOfLastEdit = 0x4755;// needs further implementation
     QByteArray data;
     size_t size;
     iter->lfh->CRC_32_uncompress = crc32File(pathOfFiles[i].toStdString(),size,data);
@@ -60,7 +60,7 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
     iter->lfh->nonCompressSize = size;
     iter->lfh->sizeofNameFile = pathOfFiles[i].toStdString().size(); // needs parsing
     iter->lfh->additionalSizeof = 0; // needs further implementation
-    iter->lfh->nameOfFile = "pathOfFiles[i]";
+    iter->lfh->nameOfFile = "input.txt";
 
     iter->cfh->neededVersion = iter->lfh->neededVersion;
     iter->cfh->flag = iter->lfh->flag;
@@ -78,7 +78,7 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
     iter->cfh->internalAttributes = 0; // needs further implementation
     iter->cfh->externalAttributes = 0;// needs further implementation
     iter->cfh->offset = 0; // needs further implementation
-    iter->cfh->comment = pathOfFiles[i]; // needs further implementation
+    iter->cfh->comment = ""; // needs further implementation
 
     iter->eocd->numberOfDrive = iter->cfh->numberOfDrive;
     iter->eocd->numberOfDriveCFH = 0; // needs further implementation
@@ -87,15 +87,19 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
     iter->eocd->sizeofCFH = sizeof(cfh)*iter->eocd->countOfCFH; // needs further implementation
     iter->eocd->offsetCFH_ofStartArchive = 0; // needs further implementation
     iter->eocd->sizeofComment = 0; // needs further implementation
-    iter->eocd->comment = pathOfFiles[i]; // needs further implementation
+    iter->eocd->comment = ""; // needs further implementation
 
     iter->writeLFH(fileZip);
-    {
-      std::string x = QString(data).toStdString();
-      fileZip.write((char*)x.c_str(),x.size());
-    }
-    iter->writeCFH(fileZip);
-    iter->writeEOCD(fileZip);
+
+
+//      std::string x = QString(data).toStdString();
+//      fileZip << x.size();
+//      fileZip.write((char*)x.c_str(),x.size());
+
+//    iter->writeCFH(fileZip);
+//    fileZip << 0x05054b50;
+//    fileZip << x.size();
+//    iter->writeEOCD(fileZip);
   }
   fileZip.close();
 }
