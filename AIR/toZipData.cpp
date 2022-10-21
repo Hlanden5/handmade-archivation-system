@@ -9,29 +9,6 @@ data_::~data_()
 {
 }
 
-void data_::writeHeader(QString header){
-  if(header.size()==0){
-    std::cout << "header.size==0(toZipData.cpp)" << std::endl;
-    exit(0);
-  }
-  char config = (header.toStdString())[0];
-
-  switch(config){
-  case 'c':
-    writeCFH(fileZip);
-    break;
-    /*case 'd':
-    writeDD(fileZip);
-    break;*/
-  case 'l':
-    writeLFH(fileZip);
-    break;
-  case 'e':
-    writeEOCD(fileZip);
-    break;
-  }
-}
-
 void data_::setPathOfFiles(std::vector<QString> pathOfFiles){
   std::vector<QString>::iterator iter_1 = pathOfFiles.begin();
   for(;iter_1!=pathOfFiles.end();iter_1++)
@@ -39,8 +16,19 @@ void data_::setPathOfFiles(std::vector<QString> pathOfFiles){
   headerArray.resize(this->pathOfFiles.size());
 }
 
+std::string getNameOfFile(std::string path){
+  std::string tmp;
+  tmp.swap(path);
+  tmp = tmp.substr(path.find_last_of("/\\")+1);
+  return tmp;
+}
+
 void data_::setPathOfZip(QString pathOfZip){
   this->pathOfZip = pathOfZip;
+  std::string tmp(pathOfFiles[0].toStdString());
+  tmp = tmp.substr(tmp.find_last_of("/\\")+1);
+  this->pathOfZip += QString::fromStdString(tmp);
+  this->pathOfZip += ".zip";
   fileZip = std::ofstream(pathOfZip.toStdString(),std::ios_base::binary | std::ios_base::out | std::ios_base::trunc);
   if(!fileZip.is_open())
     throw;
@@ -60,10 +48,13 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
     iter->lfh->CRC_32_uncompress = crc32File(pathOfFiles[i].toStdString(),size,data);
     iter->lfh->compressSize = size;// needs further implementation
     iter->lfh->nonCompressSize = size;
-    iter->lfh->sizeofNameFile = 9; // needs parsing
     iter->lfh->additionalSizeof = 0; // needs further implementation
-    iter->lfh->nameOfFile = "input.txt";
+    std::string tmp(pathOfFiles[i].toStdString());
+    tmp = tmp.substr(tmp.find_last_of("/\\")+1);
+    iter->lfh->nameOfFile.swap(tmp);
+    iter->lfh->sizeofNameFile = iter->lfh->nameOfFile.size();
 
+    iter->cfh->versionDone = 0x0000;
     iter->cfh->neededVersion = iter->lfh->neededVersion;
     iter->cfh->flag = iter->lfh->flag;
     iter->cfh->methodOfCompress = iter->lfh->methodOfCompress;
@@ -79,15 +70,19 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
     iter->cfh->numberOfDrive = 0; // maybe needs further implementation
     iter->cfh->internalAttributes = 0; // needs further implementation
     iter->cfh->externalAttributes = 0;// needs further implementation
-    iter->cfh->offset = sizeof(lfh)+iter->cfh->compressSize+iter->cfh->sizeofNameFile; // needs further implementation
+    //iter->cfh->offset = sizeof(lfh)+iter->cfh->compressSize+iter->cfh->sizeofNameFile; // needs further implementation
+    iter->cfh->offset = 0;
     iter->cfh->comment = ""; // needs further implementation
 
-    iter->eocd->numberOfDrive = iter->cfh->numberOfDrive;
+    iter->eocd->numberOfDrive = 0;//iter->cfh->numberOfDrive;
     iter->eocd->numberOfDriveCFH = 0; // needs further implementation
-    iter->eocd->countOfCFH_onThisDrive = 0; // needs further implementation
+    iter->eocd->countOfCFH_onThisDrive = 1; // needs further implementation
     iter->eocd->countOfCFH = 1; // needs further implementation
-    iter->eocd->sizeofCFH = sizeof(cfh)*iter->eocd->countOfCFH; // needs further implementation
-    iter->eocd->offsetCFH_ofStartArchive = sizeof(lfh)+iter->cfh->compressSize+iter->cfh->sizeofNameFile; // needs further implementation
+    iter->eocd->sizeofCFH = (sizeof(CentralFileHeader)+iter->cfh->sizeofNameFile
+                             +iter->cfh->sizeofComment-2*sizeof(std::string))
+        *iter->eocd->countOfCFH-2; // needs further implementation
+    iter->eocd->offsetCFH_ofStartArchive = sizeof(localFileHeader)-sizeof(std::string)
+        +iter->cfh->compressSize+iter->cfh->sizeofNameFile; // needs further implementation
     iter->eocd->sizeofComment = 0; // needs further implementation
     iter->eocd->comment = ""; // needs further implementation
 
@@ -95,6 +90,7 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
     for(const auto&c:qAsConst(data))
         fileZip << c;
 
+    iter->eocd->offsetCFH_ofStartArchive = fileZip.tellp();
     iter->writeCFH(fileZip);
 //    fileZip << q0x05054b50;
 //    fileZip << data.size()/8;

@@ -31,7 +31,7 @@ void structs::writeCFH(std::ofstream &file){
   stream << BE(cfh->CRC_32_uncompress);
   stream << BE(cfh->compressSize);
   stream << BE(cfh->nonCompressSize);
-  stream << LE(cfh->sizeofNameFile);
+  stream << BE(cfh->sizeofNameFile);
   stream << LE(cfh->additionalSizeof);
   stream << LE(cfh->sizeofComment);
   stream << LE(cfh->numberOfDrive);
@@ -72,8 +72,8 @@ void structs::writeEOCD(std::ofstream &file){
   stream << qFromBigEndian(eocd->eocd_signature);
   stream << LE(eocd->numberOfDrive);
   stream << LE(eocd->numberOfDriveCFH);
-  stream << LE(eocd->countOfCFH_onThisDrive);
-  stream << LE(eocd->countOfCFH);
+  stream << BE(eocd->countOfCFH_onThisDrive);
+  stream << BE(eocd->countOfCFH);
   stream << BE(eocd->sizeofCFH);
   stream << BE(eocd->offsetCFH_ofStartArchive);
   stream << LE(eocd->sizeofComment);

@@ -5,8 +5,8 @@ int main()
 {
  data_ test;
  std::vector<QString> path;
- path.push_back("D:\\Labs\\input.txt");
+ path.push_back("D:\\Labs\\main.cpp");
  test.setPathOfFiles(path);
- test.setPathOfZip("D:\\Labs\\1.zip");
+ test.setPathOfZip("D:\\Labs\\");
  test.collectAndLoadData();
 }

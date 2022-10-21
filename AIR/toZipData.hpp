@@ -9,6 +9,8 @@ class data_ : private structs
     std::ofstream fileZip;
     std::vector<structs> headerArray;
 
+    std::string getNameOfFile(std::string path);
+
 public:
 
     data_();
@@ -23,6 +25,5 @@ public:
 
     void collectAndLoadData();
 
-    void writeHeader(QString headerfilepath);
 };
 
