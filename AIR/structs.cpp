@@ -22,6 +22,7 @@ void structs::writeCFH(std::ofstream &file){
   QByteArray dataHeader;
   QDataStream stream(&dataHeader, QIODevice::WriteOnly);
   stream << BE(cfh->cfh_signature);
+  stream << LE(cfh->versionDone);
   stream << LE(cfh->neededVersion);
   stream << LE(cfh->flag);
   stream << LE(cfh->methodOfCompress);
@@ -40,8 +41,8 @@ void structs::writeCFH(std::ofstream &file){
   dataHeader += cfh->nameOfFile;
   dataHeader += cfh->comment;
   //test
-  stream << BE(0x05054b50);
-  stream << BE(cfh->compressSize);
+  //stream << BE(0x05054b50);
+  //stream << BE(cfh->compressSize);
   for(const auto &c:qAsConst(dataHeader))
     file << c;
 }

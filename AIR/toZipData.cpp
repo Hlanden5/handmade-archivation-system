@@ -42,6 +42,8 @@ void data_::setPathOfFiles(std::vector<QString> pathOfFiles){
 void data_::setPathOfZip(QString pathOfZip){
   this->pathOfZip = pathOfZip;
   fileZip = std::ofstream(pathOfZip.toStdString(),std::ios_base::binary | std::ios_base::out | std::ios_base::trunc);
+  if(!fileZip.is_open())
+    throw;
 }
 
 void data_::collectAndLoadData(){ // tmp realisation, needs repair
@@ -51,8 +53,8 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
     iter->lfh->neededVersion = 0x0A00;
     iter->lfh->flag = 0;
     iter->lfh->methodOfCompress = 0;
-    iter->lfh->timeOfLastEdit = 0xA972;// needs further implementation
-    iter->lfh->dataOfLastEdit = 0x4755;// needs further implementation
+    iter->lfh->timeOfLastEdit = 0x9752;// needs further implementation
+    iter->lfh->dataOfLastEdit = 0x4A55;// needs further implementation
     QByteArray data;
     size_t size;
     iter->lfh->CRC_32_uncompress = crc32File(pathOfFiles[i].toStdString(),size,data);
@@ -74,7 +76,7 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
     iter->cfh->additionalSizeof = iter->lfh->additionalSizeof;
     iter->cfh->nameOfFile = iter->lfh->nameOfFile;
     iter->cfh->sizeofComment = 0; // needs further implementation
-    iter->cfh->numberOfDrive = 1; // maybe needs further implementation
+    iter->cfh->numberOfDrive = 0; // maybe needs further implementation
     iter->cfh->internalAttributes = 0; // needs further implementation
     iter->cfh->externalAttributes = 0;// needs further implementation
     iter->cfh->offset = sizeof(lfh)+iter->cfh->compressSize+iter->cfh->sizeofNameFile; // needs further implementation

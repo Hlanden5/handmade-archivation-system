@@ -76,7 +76,6 @@ public:
   void writeLE(std::ofstream &file,quint16 data);
 
   void writeLE(std::ofstream &file,quint32 data);
-public:
 
   structs();
 
