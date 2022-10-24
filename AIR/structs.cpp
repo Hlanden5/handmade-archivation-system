@@ -40,9 +40,6 @@ void structs::writeCFH(std::ofstream &file){
   stream << BE(cfh->offset);
   dataHeader += cfh->nameOfFile;
   dataHeader += cfh->comment;
-  //test
-  //stream << BE(0x05054b50);
-  //stream << BE(cfh->compressSize);
   for(const auto &c:qAsConst(dataHeader))
     file << c;
 }

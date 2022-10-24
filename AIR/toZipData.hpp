@@ -1,6 +1,7 @@
 #pragma once
 
 #include "structs.hpp"
+#include "filemetadata.hpp"
 
 class data_ : private structs
 {
