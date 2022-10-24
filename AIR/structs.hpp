@@ -1,5 +1,14 @@
 #pragma once
 
+
+struct metadata{
+  quint16 timeOfLastEdit;
+  quint16 dataOfLastEdit;
+  quint32 sizeofFile;
+  QString name;
+  bool is_directory;
+};
+
 struct CentralFileHeader{
   const quint32 cfh_signature = 0x02014b50;
   quint16 versionDone;

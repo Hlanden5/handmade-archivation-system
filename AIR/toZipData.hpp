@@ -6,10 +6,10 @@
 class data_ : private structs
 {
     QString pathOfZip;
-    std::vector<QString> pathOfFiles;
+    QString pathOfFiles;
     std::ofstream fileZip;
     std::vector<structs> headerArray;
-
+    std::vector<metadata> metainfo;
     std::string getNameOfFile(std::string path);
 
 public:
@@ -18,7 +18,7 @@ public:
 
     ~data_();
 
-    void setPathOfFiles(std::vector<QString> pathOfFiles);
+    void setPathOfFiles(QString pathOfFiles);
 
     void setPathOfZip(QString pathOfZip);
 

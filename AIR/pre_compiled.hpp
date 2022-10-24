@@ -11,4 +11,5 @@
 #include <vector>
 #include <bitset>
 #include <QtEndian>
+#include <ctime>
 #endif

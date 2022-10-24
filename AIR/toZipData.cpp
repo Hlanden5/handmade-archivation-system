@@ -9,11 +9,13 @@ data_::~data_()
 {
 }
 
-void data_::setPathOfFiles(std::vector<QString> pathOfFiles){
-  std::vector<QString>::iterator iter_1 = pathOfFiles.begin();
-  for(;iter_1!=pathOfFiles.end();iter_1++)
-    this->pathOfFiles.push_back(*iter_1);
-  headerArray.resize(this->pathOfFiles.size());
+void data_::setPathOfFiles(QString pathOfFiles){
+  filesMetadata tmp;
+  tmp.setPath(pathOfFiles);
+  tmp.collectData();
+  tmp.printMetadata();
+  metainfo.swap(tmp.getMetadata());
+  headerArray.resize(metainfo.size());
 }
 
 std::string getNameOfFile(std::string path){
@@ -26,7 +28,7 @@ std::string getNameOfFile(std::string path){
 void data_::setPathOfZip(QString pathOfZip){
   {
     QString tmp_2;
-    std::string tmp(pathOfFiles[0].toStdString());
+    std::string tmp(metainfo[0].name.toStdString());
     tmp_2.push_back(QString::fromStdString(tmp.substr(tmp.find_last_of("/\\")+1)));
     tmp_2.push_back(".zip");
     tmp_2.push_front(pathOfZip);
@@ -43,20 +45,22 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
   quint16 countCFH = 0;
   quint32 offsetCFH = 0;
   quint32 sizeAllCFH = 0;
-  for(size_t i=0;i<pathOfFiles.size();i++,iter++){
-      /*if(directory)*/
+  for(size_t i=0;i<metainfo.size();i++,iter++){
+      if(metainfo[i].is_directory == true){
+
+        }else{
       iter->lfh->neededVersion = 0x0A00;
       iter->lfh->flag = 0;
       iter->lfh->methodOfCompress = 0;
-      iter->lfh->timeOfLastEdit = 0x9752;// needs further implementation
-      iter->lfh->dataOfLastEdit = 0x4A55;// needs further implementation
+      iter->lfh->timeOfLastEdit = metainfo[i].timeOfLastEdit;// needs further implementation
+      iter->lfh->dataOfLastEdit = metainfo[i].dataOfLastEdit;// needs further implementation
       QByteArray data;
       size_t size;
-      iter->lfh->CRC_32_uncompress = crc32File(pathOfFiles[i].toStdString(),size,data);
+      iter->lfh->CRC_32_uncompress = crc32File(metainfo[i].name.toStdString(),size,data);
       iter->lfh->compressSize = size;// needs further implementation
       iter->lfh->nonCompressSize = size;
       iter->lfh->additionalSizeof = 0; // needs further implementation
-      std::string tmp(pathOfFiles[i].toStdString());
+      std::string tmp(metainfo[i].name.toStdString());
       tmp = tmp.substr(tmp.find_last_of("/\\")+1);
       iter->lfh->nameOfFile.swap(tmp);
       iter->lfh->sizeofNameFile = iter->lfh->nameOfFile.size();
@@ -83,47 +87,26 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
       iter->cfh->numberOfDrive = 0; // maybe needs further implementation
       iter->cfh->internalAttributes = 0; // needs further implementation
       iter->cfh->externalAttributes = 0;// needs further implementation
-      //iter->cfh->offset = sizeof(lfh)+iter->cfh->compressSize+iter->cfh->sizeofNameFile; // needs further implementation
-      //      if(i==0)
-      //        iter->cfh->offset = 0;
-      //      else
-      //        iter->cfh->offset = fileZip.tellp();
       iter->cfh->comment = ""; // needs further implementation
 
       countCFH++;
       sizeAllCFH += (sizeof(CentralFileHeader)-2+iter->cfh->sizeofNameFile+iter->cfh->sizeofComment-2*sizeof(std::string));
-
-      //      iter->eocd->numberOfDrive = 0;//iter->cfh->numberOfDrive;
-      //      iter->eocd->numberOfDriveCFH = 0; // needs further implementation
-      //      iter->eocd->countOfCFH_onThisDrive = 1; // needs further implementation
-      //      iter->eocd->countOfCFH = 1; // needs further implementation
-      //      iter->eocd->sizeofCFH = (sizeof(CentralFileHeader)+iter->cfh->sizeofNameFile
-      //                               +iter->cfh->sizeofComment-2*sizeof(std::string))
-      //          *iter->eocd->countOfCFH-2; // needs further implementation
-      //      //iter->eocd->offsetCFH_ofStartArchive = sizeof(localFileHeader)-sizeof(std::string)
-      //          //+iter->cfh->compressSize+iter->cfh->sizeofNameFile; // needs further implementation
-      //      iter->eocd->sizeofComment = 0; // needs further implementation
-      //      iter->eocd->comment = ""; // needs further implementation
-
-
-      if(!(i+1<pathOfFiles.size()))
+      if(!(i+1<metainfo.size()))
         offsetCFH = fileZip.tellp();
-      //iter->writeCFH(fileZip);
-      //iter->writeEOCD(fileZip);
-    }
 
+    }
+  }
   iter = headerArray.begin();
-  for(size_t i=0;i<pathOfFiles.size();i++,iter++){
+  for(size_t i=0;i<metainfo.size();i++,iter++){
       iter->writeCFH(fileZip);
-      if(!(i+1<pathOfFiles.size())){
-          std::cout << sizeAllCFH << std::endl;
+      if(!(i+1<metainfo.size())){
+          //std::cout << sizeAllCFH << std::endl;
           iter->eocd->numberOfDrive = 0;//iter->cfh->numberOfDrive;
           iter->eocd->numberOfDriveCFH = 0; // needs further implementation
           iter->eocd->countOfCFH_onThisDrive = countCFH; // needs further implementation
           iter->eocd->countOfCFH = countCFH; // needs further implementation
           iter->eocd->sizeofCFH = sizeAllCFH; // needs further implementation
           iter->eocd->offsetCFH_ofStartArchive = offsetCFH;
-          //+iter->cfh->compressSize+iter->cfh->sizeofNameFile; // needs further implementation
           iter->eocd->sizeofComment = 0; // needs further implementation
           iter->eocd->comment = ""; // needs further implementatio
         }
