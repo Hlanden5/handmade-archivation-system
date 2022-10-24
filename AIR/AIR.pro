@@ -15,7 +15,8 @@ SOURCES += \
         main.cpp \
         structs.cpp \
         toZipData.cpp \
-        tounzipdata.cpp
+        tounzipdata.cpp \
+        filemetadata.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -27,4 +28,5 @@ HEADERS += \
     pre_compiled.hpp \
     structs.hpp \
     toZipData.hpp \
-    tounzipdata.hpp
+    tounzipdata.hpp \
+    filemetadata.hpp
