@@ -109,17 +109,16 @@ static UNS_32_BITS crc_32_tab[] = { /* CRC polynomial 0xedb88320 */
                                   };
 
 
-DWORD crc32File(std::string fileName,size_t &count,QByteArray &data){
+DWORD crc32File(std::string fileName,QByteArray &data){
   DWORD oldcrc32;
-  count = 0;
   oldcrc32 = 0xFFFFFFFF;
   int c;
 
   std::ifstream file(fileName,std::ios_base::binary);
+  QDataStream stream(&data, QIODevice::WriteOnly);
   for(std::istreambuf_iterator<char> i(file), e; i != e; ++i){
+      stream << *i;
       c = *i;
-      count++;
-      data+=c;
       oldcrc32 = UPDC32(c,oldcrc32);
     }
   DWORD crc;

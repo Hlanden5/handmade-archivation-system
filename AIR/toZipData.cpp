@@ -13,7 +13,7 @@ void data_::setPathOfFiles(QString pathOfFiles){
   filesMetadata tmp;
   tmp.setPath(pathOfFiles);
   tmp.collectData();
-  tmp.printMetadata();//test
+  //tmp.printMetadata();//test
   metainfo.swap(tmp.getMetadata());
   headerArray.resize(metainfo.size());
   this->pathOfFiles = pathOfFiles;
@@ -104,8 +104,12 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
           iter->lfh->timeOfLastEdit = metainfo[i].timeOfLastEdit;// needs further implementation
           iter->lfh->dataOfLastEdit = metainfo[i].dataOfLastEdit;// needs further implementation
           QByteArray data;
-          size_t size;
-          iter->lfh->CRC_32_uncompress = crc32File(metainfo[i].name.toStdString(),size,data);
+          size_t size = metainfo[i].sizeofFile;
+          data.resize(size);
+          iter->lfh->CRC_32_uncompress = crc32File(metainfo[i].name.toStdString(),data);
+//          std::cout << "File : " << metainfo[i].name.toStdString()
+//                    << "\tCRC-32 " << std::hex << iter->lfh->CRC_32_uncompress
+//                    << std::dec << std::endl;
           iter->lfh->compressSize = size;// needs further implementation
           iter->lfh->nonCompressSize = size;
           iter->lfh->additionalSizeof = 0; // needs further implementation
