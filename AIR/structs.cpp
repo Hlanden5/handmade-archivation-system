@@ -26,8 +26,8 @@ void structs::writeCFH(std::ofstream &file){
   stream << LE(cfh->neededVersion);
   stream << LE(cfh->flag);
   stream << LE(cfh->methodOfCompress);
-  stream << LE(cfh->timeOfLastEdit);
-  stream << LE(cfh->dataOfLastEdit);
+  stream << BE(lfh->dataOfLastEdit);
+  stream << BE(lfh->timeOfLastEdit);
   stream << BE(cfh->CRC_32_uncompress);
   stream << BE(cfh->compressSize);
   stream << BE(cfh->nonCompressSize);
@@ -50,9 +50,9 @@ void structs::writeLFH(std::ofstream &file){
   stream << qFromBigEndian(lfh->lfh_signature);
   stream << LE(lfh->neededVersion);
   stream << LE(lfh->flag);
-  stream << LE(lfh->methodOfCompress);
-  stream << LE(lfh->timeOfLastEdit);
-  stream << LE(lfh->dataOfLastEdit);
+  stream << LE(lfh->methodOfCompress); 
+  stream << BE(lfh->dataOfLastEdit);
+  stream << BE(lfh->timeOfLastEdit);
   stream << BE(lfh->CRC_32_uncompress);
   stream << BE(lfh->compressSize);
   stream << BE(lfh->nonCompressSize);

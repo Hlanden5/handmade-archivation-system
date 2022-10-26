@@ -26,5 +26,6 @@ public:
 
     void collectAndLoadData();
 
+    void delMainPath(std::string &path);
 };
 
