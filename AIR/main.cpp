@@ -1,13 +1,17 @@
 #include "filemetadata.hpp"
 #include "toZipData.hpp"
 
+
 int main()
 {
+ std::ios::sync_with_stdio(false);
+ std::cin.tie(0);
+ std::cout.tie(0);
  clock_t t0 = clock();
 
  data_ test;
  QString path;
- path.push_back("D:\\Labs\\");
+ path.push_back("D:\\Gif for OBS\\");
  test.setPathOfFiles(path);
  test.setPathOfZip("D:\\AIR\\");
  test.collectAndLoadData();

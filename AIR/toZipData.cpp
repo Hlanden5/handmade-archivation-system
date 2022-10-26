@@ -152,7 +152,7 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
             offsetCFH = fileZip.tellp();
         }
       clock_t t1 = clock();
-      std::cout << "Filename:" << metainfo[i].name.toStdString() << "\ttime: " << (double)(t1 - t0) / CLOCKS_PER_SEC << std::endl;
+      std::cout << "Filename:" << metainfo[i].name.toStdString() << "\ttime: " << (double)(t1 - t0) / CLOCKS_PER_SEC << "\n";
     }
 
   iter = headerArray.begin();

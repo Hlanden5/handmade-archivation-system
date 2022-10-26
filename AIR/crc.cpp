@@ -112,15 +112,17 @@ static UNS_32_BITS crc_32_tab[] = { /* CRC polynomial 0xedb88320 */
 void crc32File(const char *filename, QByteArray &data, quint32 &result){
   quint32 oldcrc32;
   oldcrc32 = 0xFFFFFFFF;
-  int c;
-
   std::ifstream file(std::string(filename),std::ios_base::binary);
   file.read((char*)&data[0],data.size());
   QByteArray::iterator it = data.begin();
-  for(;it!=data.end();++it){
-      c = *it;
-      oldcrc32 = UPDC32(c,oldcrc32);
+  QByteArray::iterator it_end = data.end();
+  for(;it!=it_end;++it){
+      oldcrc32 = UPDC32(*it,oldcrc32);
     }
+//  while(it!=it_end){
+//      oldcrc32 = UPDC32(*it,oldcrc32);
+//      ++it;
+//    }
   result = ~oldcrc32;
 }
 
