@@ -4,7 +4,9 @@ CONFIG += c++17 console
 CONFIG -= app_bundle
 CONFIG += precompile_header
 PRECOMPILED_HEADER = pre_compiled.hpp
-HEADERS += pre_compiled.hpp
+HEADERS += pre_compiled.hpp \
+  userinterface.hpp \
+  zipcontroller.hpp
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -16,7 +18,9 @@ SOURCES += \
         structs.cpp \
         toZipData.cpp \
         tounzipdata.cpp \
-        filemetadata.cpp
+        filemetadata.cpp \
+        userinterface.cpp \
+        zipcontroller.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -30,3 +34,5 @@ HEADERS += \
     toZipData.hpp \
     tounzipdata.hpp \
     filemetadata.hpp
+
+QT += widgets quick
