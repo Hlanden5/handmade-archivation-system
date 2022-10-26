@@ -11,8 +11,7 @@ int main()
  test.setPathOfFiles(path);
  test.setPathOfZip("D:\\AIR\\");
  test.collectAndLoadData();
- std::cout << "\n\n\nSuccessful archivation!" << std::endl;
-
+ std::cout << (std::cout.tellp()==-1 ? "" :"\n\n\n") << "Successful archivation!" << std::endl;
  clock_t t1 = clock();
  std::cout << "time: " << (double)(t1 - t0) / CLOCKS_PER_SEC << std::endl;
 }

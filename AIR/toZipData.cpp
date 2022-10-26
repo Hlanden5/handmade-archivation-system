@@ -50,11 +50,13 @@ void data_::delMainPath(std::string &path){
 }
 
 void data_::collectAndLoadData(){ // tmp realisation, needs repair
+
   std::vector<structs>::iterator iter = headerArray.begin();
   quint16 countCFH = 0;
   quint32 offsetCFH = 0;
   quint32 sizeAllCFH = 0;
   for(size_t i=0;i<metainfo.size();i++,iter++){
+      clock_t t0 = clock();
       if(metainfo[i].is_directory == true){
           iter->lfh->neededVersion = 0x0A00;
           iter->lfh->flag = 0;
@@ -148,9 +150,11 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
           sizeAllCFH += (sizeof(CentralFileHeader)-2+iter->cfh->sizeofNameFile+iter->cfh->sizeofComment-2*sizeof(std::string));
           if(!(i+1<metainfo.size()))
             offsetCFH = fileZip.tellp();
-
         }
+      clock_t t1 = clock();
+      std::cout << "Filename:" << metainfo[i].name.toStdString() << "\ttime: " << (double)(t1 - t0) / CLOCKS_PER_SEC << std::endl;
     }
+
   iter = headerArray.begin();
   for(size_t i=0;i<metainfo.size();i++,iter++)
     iter->writeCFH(fileZip);
