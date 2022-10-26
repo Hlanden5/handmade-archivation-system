@@ -7,7 +7,7 @@ int main()
 
  data_ test;
  QString path;
- path.push_back("D:\\Labs");
+ path.push_back("D:\\Labs\\");
  test.setPathOfFiles(path);
  test.setPathOfZip("D:\\AIR\\");
  test.collectAndLoadData();

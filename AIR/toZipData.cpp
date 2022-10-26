@@ -45,12 +45,11 @@ void data_::setPathOfZip(QString pathOfZip){
     throw;
 }
 
-void data_::delMainPath(std::string &path){
-  path = path.erase(0,pathOfFiles.size()+1);
+std::string data_::delMainPath(std::string path){
+  return path.erase(0,pathOfFiles.size());
 }
 
 void data_::collectAndLoadData(){ // tmp realisation, needs repair
-
   std::vector<structs>::iterator iter = headerArray.begin();
   quint16 countCFH = 0;
   quint32 offsetCFH = 0;
@@ -68,9 +67,11 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
           iter->lfh->nonCompressSize = 0;
           iter->lfh->additionalSizeof = 0; // needs further implementation
           std::string tmp(metainfo[i].name.toStdString());
-          delMainPath(tmp);
-          tmp+="\\";
-          iter->lfh->nameOfFile.swap(tmp);
+          std::string nameOfFile = delMainPath(tmp);
+          nameOfFile+="\\";
+          iter->lfh->nameOfFile.swap(nameOfFile);
+          iter->lfh->sizeofNameFile = iter->lfh->nameOfFile.size();
+
 
           iter->lfh->sizeofNameFile = iter->lfh->nameOfFile.size();
 
@@ -100,33 +101,32 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
           if(!(i+1<metainfo.size()))
             offsetCFH = fileZip.tellp();
         }else{
+          std::string tmp(metainfo[i].name.toStdString());
+          QByteArray data;         
+          size_t size = metainfo[i].sizeofFile;
+          data.resize(size);
+          std::thread thr(crc32File,tmp.c_str(),std::ref(data),std::ref(iter->lfh->CRC_32_uncompress));
+
+//          std::cout << "File : " << metainfo[i].name.toStdString()
+//                    << "\tCRC-32 " << std::hex << iter->lfh->CRC_32_uncompress
+//                    << std::dec << std::endl;
           iter->lfh->neededVersion = 0x0A00;
           iter->lfh->flag = 0;
           iter->lfh->methodOfCompress = 0;
           iter->lfh->timeOfLastEdit = metainfo[i].timeOfLastEdit;// needs further implementation
           iter->lfh->dataOfLastEdit = metainfo[i].dataOfLastEdit;// needs further implementation
-          QByteArray data;
-          size_t size = metainfo[i].sizeofFile;
-          data.resize(size);
-          iter->lfh->CRC_32_uncompress = crc32File(metainfo[i].name.toStdString(),data);
-//          std::cout << "File : " << metainfo[i].name.toStdString()
-//                    << "\tCRC-32 " << std::hex << iter->lfh->CRC_32_uncompress
-//                    << std::dec << std::endl;
           iter->lfh->compressSize = size;// needs further implementation
           iter->lfh->nonCompressSize = size;
           iter->lfh->additionalSizeof = 0; // needs further implementation
-          std::string tmp(metainfo[i].name.toStdString());
-          delMainPath(tmp);
-          //tmp = tmp.substr(tmp.find_last_of("/\\")+1);
-          iter->lfh->nameOfFile.swap(tmp);
-
+          std::string nameOfFile = delMainPath(tmp);
+          iter->lfh->nameOfFile.swap(nameOfFile);
           iter->lfh->sizeofNameFile = iter->lfh->nameOfFile.size();
 
           iter->cfh->offset = fileZip.tellp();
+          thr.join();
           iter->writeLFH(fileZip);
 
-          for(const auto&c:qAsConst(data))
-            fileZip << c;
+          fileZip.write(data.constData(),data.size());
 
           iter->cfh->versionDone = 0x0000;
           iter->cfh->neededVersion = iter->lfh->neededVersion;
@@ -158,8 +158,6 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
   iter = headerArray.begin();
   for(size_t i=0;i<metainfo.size();i++,iter++)
     iter->writeCFH(fileZip);
-  //iter = headerArray[headerArray.size()]
-  //std::cout << sizeAllCFH << std::endl;
   iter = headerArray.begin();
   iter->eocd->numberOfDrive = 0;//iter->cfh->numberOfDrive;
   iter->eocd->numberOfDriveCFH = 0; // needs further implementation

@@ -4,9 +4,6 @@ CONFIG += c++17 console
 CONFIG -= app_bundle
 CONFIG += precompile_header
 PRECOMPILED_HEADER = pre_compiled.hpp
-HEADERS += pre_compiled.hpp \
-  userinterface.hpp \
-  zipcontroller.hpp
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -33,6 +30,7 @@ HEADERS += \
     structs.hpp \
     toZipData.hpp \
     tounzipdata.hpp \
-    filemetadata.hpp
+    filemetadata.hpp \
+    pre_compiled.hpp
 
 QT += widgets quick
