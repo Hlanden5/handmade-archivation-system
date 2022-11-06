@@ -1,4 +1,3 @@
-#include "filemetadata.hpp"
 #include "toZipData.hpp"
 
 
@@ -8,6 +7,7 @@ int main()
  std::cin.tie(0);
  std::cout.tie(0);
  clock_t t0 = clock();
+ setlocale(0,"");
 
  data_ test;
  QString path;

@@ -11,7 +11,7 @@ class data_ : private structs
     std::vector<structs> headerArray;
     std::vector<metadata> metainfo;
     std::string getNameOfFile(std::string path);
-
+    bool isUtf_8(std::string toCheck);
 public:
 
     data_();

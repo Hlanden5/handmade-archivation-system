@@ -9,6 +9,15 @@ data_::~data_()
 {
 }
 
+bool data_::isUtf_8(std::string toCheck){
+  std::string tmp("ÀÁÂÃÄÅ¨ÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäå¸æçèéêëìíîïðñòóôõö÷øùúûüýþÿ");
+  for(const auto &c:toCheck){
+      if(tmp.find(c)!=std::string::npos)
+        return true;
+    }
+  return false;
+}
+
 void data_::setPathOfFiles(QString pathOfFiles){
   filesMetadata tmp;
   tmp.setPath(pathOfFiles);
@@ -66,13 +75,21 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
           iter->lfh->compressSize = 0;// needs further implementation
           iter->lfh->nonCompressSize = 0;
           iter->lfh->additionalSizeof = 0; // needs further implementation
-          std::string tmp(metainfo[i].name.toStdString());
-          std::string nameOfFile = delMainPath(tmp);
-          nameOfFile+="\\";
-          iter->lfh->nameOfFile.swap(nameOfFile);
+          if(isUtf_8(metainfo[i].name.toLocal8Bit().toStdString())){
+              QString tmp;
+              tmp+=delMainPath(metainfo[i].name.toLocal8Bit().toStdString()) + "\\";
+              tmp = tmp.toUtf8();
+              for(const auto &c:qAsConst(tmp)){
+                  std::bitset<8> x(tmp[0].toLatin1());
+                  iter->lfh->nameOfFile += char(x.to_ulong());
+                }
+            }
+          else{
+              iter->lfh->nameOfFile = delMainPath(metainfo[i].name.toLocal8Bit().toStdString()) + "\\";
+            }
+          //std::string tmp(metainfo[i].name.toLocal8Bit());
+          //iter->lfh->nameOfFile = delMainPath(metainfo[i].name.toLocal8Bit().toStdString()) + "\\";
           iter->lfh->sizeofNameFile = iter->lfh->nameOfFile.size();
-
-
           iter->lfh->sizeofNameFile = iter->lfh->nameOfFile.size();
 
           iter->cfh->offset = fileZip.tellp();
@@ -101,13 +118,13 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
           if(!(i+1<metainfo.size()))
             offsetCFH = fileZip.tellp();
         }else{
-          std::string tmp(metainfo[i].name.toStdString());
+          std::string tmp(metainfo[i].name.toLocal8Bit());
           QByteArray data;         
           size_t size = metainfo[i].sizeofFile;
           data.resize(size);
-          std::thread thr(crc32File,tmp.c_str(),std::ref(data),std::ref(iter->lfh->CRC_32_uncompress));
+          crc32File(tmp,data,iter->lfh->CRC_32_uncompress);
 
-//          std::cout << "File : " << metainfo[i].name.toStdString()
+//          std::cout << "File : " << metainfo[i].name.toLocal8Bit().toStdString()
 //                    << "\tCRC-32 " << std::hex << iter->lfh->CRC_32_uncompress
 //                    << std::dec << std::endl;
           iter->lfh->neededVersion = 0x0A00;
@@ -123,7 +140,6 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
           iter->lfh->sizeofNameFile = iter->lfh->nameOfFile.size();
 
           iter->cfh->offset = fileZip.tellp();
-          thr.join();
           iter->writeLFH(fileZip);
 
           fileZip.write(data.constData(),data.size());
@@ -152,7 +168,7 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
             offsetCFH = fileZip.tellp();
         }
       clock_t t1 = clock();
-      std::cout << "Filename:" << metainfo[i].name.toStdString() << "\ttime: " << (double)(t1 - t0) / CLOCKS_PER_SEC << "\n";
+      std::cout << "Filename:" << metainfo[i].name.toLocal8Bit().toStdString() << "\ttime: " << (double)(t1 - t0) / CLOCKS_PER_SEC << "\n";
     }
 
   iter = headerArray.begin();
