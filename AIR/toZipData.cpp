@@ -1,5 +1,6 @@
 #include "toZipData.hpp"
 #include "crc.hpp"
+#include "structs.hpp"
 
 data_::data_()
 {
@@ -139,16 +140,14 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
 //                   << std::endl;
           if(metainfo[i].name.isValidUtf16()){ // need to check if UTF8
               flagBits.flip(11);
-              iter->lfh->extraField += 0x75;
-              iter->lfh->extraField += 0x70;
-              iter->lfh->additionalSizeof = iter->lfh->extraField.size();
-              //iter->lfh->extraField += " î’ƒ1";
-//              iter->lfh->extraField += 0x75;
-//              iter->lfh->extraField += 0x63;
-              iter->lfh->extraField += delMainPath(std::string(metainfo[i].name.toUtf8()));
-              //iter->cfh->extraField += "                     u|·øñØ)B0Î:÷Ø±ÌáöØup î’ƒ1Ð¢";
-              iter->cfh->extraField += delMainPath(std::string(metainfo[i].name.toUtf8()));
-              iter->cfh->additionalSizeof = iter->cfh->extraField.size();
+              struct fileNameUTF8 filenameUTF;
+              filenameUTF.unicodeName = delMainPath(std::string(metainfo[i].name.toUtf8()));
+              filenameUTF.size = filenameUTF.unicodeName.size() + 9;
+              crc32STR(filenameUTF.unicodeName,filenameUTF.nameCRC32);
+              iter->lfh->additionalSizeof = filenameUTF.size;
+              iter->lfh->extraField = getUTF8(&filenameUTF);
+              iter->cfh->extraField = getUTF8(&filenameUTF);
+              iter->cfh->additionalSizeof = filenameUTF.size;
             }
           // if()// need further implementation, check end of this file
           iter->lfh->flag = flagBits.to_ullong();
@@ -194,21 +193,21 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
       clock_t t1 = clock();
       std::cout << "Filename:" << std::string(metainfo[i].name.toUtf8()) << "\ttime: " << (double)(t1 - t0) / CLOCKS_PER_SEC << "\n";
     }
-
+  struct endOfCentralDirectory eocd;
   iter = headerArray.begin();
   for(size_t i=0;i<metainfo.size();i++,iter++)
     iter->writeCFH(fileZip);
   iter = headerArray.begin();
-  iter->eocd->numberOfDrive = 0;//iter->cfh->numberOfDrive;
-  iter->eocd->numberOfDriveCFH = 0; // needs further implementation
-  iter->eocd->countOfCFH_onThisDrive = countCFH; // needs further implementation
-  iter->eocd->countOfCFH = countCFH; // needs further implementation
-  iter->eocd->sizeofCFH = sizeAllCFH; // needs further implementation
-  iter->eocd->offsetCFH_ofStartArchive = offsetCFH;
-  iter->eocd->sizeofComment = 0; // needs further implementation
-  iter->eocd->comment = ""; // needs further implementation
+  eocd.numberOfDrive = 0;//iter->cfh->numberOfDrive;
+  eocd.numberOfDriveCFH = 0; // needs further implementation
+  eocd.countOfCFH_onThisDrive = countCFH; // needs further implementation
+  eocd.countOfCFH = countCFH; // needs further implementation
+  eocd.sizeofCFH = sizeAllCFH; // needs further implementation
+  eocd.offsetCFH_ofStartArchive = offsetCFH;
+  eocd.sizeofComment = 0; // needs further implementation
+  eocd.comment = ""; // needs further implementation
 
-  iter->writeEOCD(fileZip);
+  writeEOCD(fileZip,&eocd);
   fileZip.close();
 }
 

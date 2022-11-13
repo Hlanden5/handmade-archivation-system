@@ -8,14 +8,11 @@ structs::structs()
   cfh = new CentralFileHeader;
   //dd = new dataDescriptor;
   lfh = new localFileHeader;
-  eocd = new endOfCentralDirectory;
 }
 
 structs::~structs(){
   delete cfh;
-  //delete dd;
   delete lfh;
-  delete eocd;
 }
 
 void structs::writeCFH(std::ofstream &file){
@@ -65,7 +62,7 @@ void structs::writeLFH(std::ofstream &file){
     file << c;
 }
 
-void structs::writeEOCD(std::ofstream &file){
+void writeEOCD(std::ofstream &file, struct endOfCentralDirectory *eocd){
   QByteArray dataHeader;
   QDataStream stream(&dataHeader, QIODevice::WriteOnly);
   stream << qFromBigEndian(eocd->eocd_signature);
@@ -79,6 +76,28 @@ void structs::writeEOCD(std::ofstream &file){
   dataHeader += eocd->comment;
   for(const auto &c:qAsConst(dataHeader))
     file << c;
+}
+
+std::string getUTF8(fileNameUTF8 *filename){
+  QByteArray dataHeader;
+  QDataStream stream(&dataHeader, QIODevice::WriteOnly);
+  stream << BE(filename->signature);
+  stream << LE(filename->size);
+  stream << LE(filename->version);
+  stream << BE(filename->nameCRC32);
+  dataHeader += filename->unicodeName;
+  return dataHeader.toStdString();
+}
+
+std::string getUTF8(commentUTF8 *comment){
+  QByteArray dataHeader;
+  QDataStream stream(&dataHeader, QIODevice::WriteOnly);
+  stream << BE(comment->signature);
+  stream << LE(comment->size);
+  stream << LE(comment->version);
+  stream << BE(comment->commentCRC32);
+  dataHeader += comment->commentCRC32;
+  return dataHeader.toStdString();
 }
 
 /*void structs::writeDD(std::ofstream &file){

@@ -1,5 +1,6 @@
 //#pragma GCC target("avx,avx2,f16c,fma,sse3,ssse3,sse4.1,sse4.2")
 #include "crc.hpp"
+#include <string>
 
 /**********************************************************************\
 |* Demonstration program to compute the 32-bit CRC used as the frame  *|
@@ -122,4 +123,15 @@ void crc32File(std::string filename, QByteArray &data, quint32 &result){
   result = ~oldcrc32;
 }
 
+void crc32STR(std::string filename, quint32 &result){
+  quint32 oldcrc32;
+  oldcrc32 = 0xFFFFFFFF;
+  std::ifstream file(filename,std::ios_base::binary);
+  std::cout << filename << std::endl;
+  std::string::iterator it = filename.begin();
+  std::string::iterator it_end = filename.end();
+  for(;it!=it_end;++it)
+    oldcrc32 = UPDC32(*it,oldcrc32);
+  result = ~oldcrc32;
+}
 

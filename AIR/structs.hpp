@@ -67,14 +67,32 @@ struct endOfCentralDirectory{
   qint16 sizeofComment;
   std::string comment;
 };
+void writeEOCD(std::ofstream &file, endOfCentralDirectory *eocd);
+
+struct fileNameUTF8{
+  const qint16 signature = 0x7075;
+  qint16 size;
+  qint8 version = 1;
+  quint32 nameCRC32;
+  std::string unicodeName;
+};
+std::string getUTF8(fileNameUTF8 *filename);
+
+struct commentUTF8{
+  const qint16 signature = 0x7075;
+  qint16 size;
+  qint8 version = 1;
+  quint32 commentCRC32;
+  std::string unicodeName;
+};
+std::string getUTF8(commentUTF8 *comment);
 
 class structs
 {
 public:
   struct CentralFileHeader *cfh;
   //struct dataDescriptor *dd;
-  struct localFileHeader *lfh;
-  struct endOfCentralDirectory *eocd;
+  struct localFileHeader *lfh; 
 
   void writeCFH(std::ofstream &file);
 
@@ -82,7 +100,7 @@ public:
 
   void writeLFH(std::ofstream &file);
 
-  void writeEOCD(std::ofstream &file);
+
 
   void writeLE(std::ofstream &file,quint16 data);
 
