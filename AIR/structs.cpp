@@ -39,7 +39,8 @@ void structs::writeCFH(std::ofstream &file){
   stream << BE(cfh->externalAttributes);
   stream << BE(cfh->offset);
   dataHeader += cfh->nameOfFile;
-  dataHeader += cfh->comment;
+  dataHeader += lfh->extraField;
+  dataHeader += cfh->comment;  
   for(const auto &c:qAsConst(dataHeader))
     file << c;
 }
@@ -59,6 +60,7 @@ void structs::writeLFH(std::ofstream &file){
   stream << BE(lfh->sizeofNameFile);
   stream << LE(lfh->additionalSizeof);
   dataHeader += lfh->nameOfFile;
+  dataHeader += lfh->extraField;
   for(const auto &c:qAsConst(dataHeader))
     file << c;
 }

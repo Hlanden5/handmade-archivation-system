@@ -4,4 +4,3 @@
   ^ ((BYTE)octet)) & 0xff] ^ ((crc) >> 8))
 
 void crc32File(std::string filename, QByteArray &data, quint32 &result);
-

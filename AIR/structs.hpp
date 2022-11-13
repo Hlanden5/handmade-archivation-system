@@ -28,6 +28,7 @@ struct CentralFileHeader{
   quint32 externalAttributes;
   quint32 offset;
   std::string nameOfFile;
+  std::string extraField;
   std::string comment;
 };
 
@@ -52,6 +53,7 @@ struct localFileHeader{
   quint16 sizeofNameFile;
   quint16 additionalSizeof;
   std::string nameOfFile;
+  std::string extraField;
 };
 
 struct endOfCentralDirectory{

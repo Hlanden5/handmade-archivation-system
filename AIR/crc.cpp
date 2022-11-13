@@ -1,3 +1,4 @@
+//#pragma GCC target("avx,avx2,f16c,fma,sse3,ssse3,sse4.1,sse4.2")
 #include "crc.hpp"
 
 /**********************************************************************\
@@ -108,17 +109,16 @@ static UNS_32_BITS crc_32_tab[] = { /* CRC polynomial 0xedb88320 */
                                     0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
                                   };
 
-
 void crc32File(std::string filename, QByteArray &data, quint32 &result){
   quint32 oldcrc32;
   oldcrc32 = 0xFFFFFFFF;
   std::ifstream file(filename,std::ios_base::binary);
+  std::cout << filename << std::endl;
   file.read((char*)&data[0],data.size());
   QByteArray::iterator it = data.begin();
   QByteArray::iterator it_end = data.end();
-  for(;it!=it_end;++it){
-      oldcrc32 = UPDC32(*it,oldcrc32);
-    }
+  for(;it!=it_end;++it)
+    oldcrc32 = UPDC32(*it,oldcrc32);
   result = ~oldcrc32;
 }
 

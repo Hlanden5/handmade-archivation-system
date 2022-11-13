@@ -61,10 +61,8 @@ void filesMetadata::DisplayDirectoryTreeImp(const fs::path& pathToShow, int leve
           auto filename = entry.path().filename();
           time_t ftime = time_t_(fs::last_write_time(entry));
           check.resize(check.size()+1);
-          check[check.size()-1].name = QString::fromStdString(entry.path().string());
+          check[check.size()-1].name = QString::fromUtf16(entry.path().generic_u16string().c_str());
           check[check.size()-1].is_directory = fs::is_directory(entry.status());
-          check[check.size()-1].timeOfLastEdit = 0; // needs further implementation
-          check[check.size()-1].dataOfLastEdit = 0; // needs further implementation
           check[check.size()-1].sizeofFile = (fs::is_directory(entry.status()) == 1 ? quint32(0) : static_cast<quint32>(fs::file_size(entry.path())));
           getMSDOSFormatTime(ftime,check[check.size()-1].timeOfLastEdit,check[check.size()-1].dataOfLastEdit);
           if (fs::is_directory(entry.status()))
@@ -100,10 +98,11 @@ void filesMetadata::collectData(){
 }
 
 void filesMetadata::printMetadata(){
+  std::cout <<  GetConsoleOutputCP() << std::endl;
   std::vector<metadata>::iterator iter = metainfo.begin();
   for(;iter!=metainfo.end();iter++){
       std::cout << "\n";
-      std::cout << "filename = " << iter->name.toStdString()
+      std::cout << "filename = " << std::string(iter->name.toUtf8())
                 << "\nsize of file = " << iter->sizeofFile
                 << "\ndirectory status(" << (iter->is_directory ? "YES)" : "NO)")
                 << "\ntime of last edit(MS-DOS) " << iter->timeOfLastEdit

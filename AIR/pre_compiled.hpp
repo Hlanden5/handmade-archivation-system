@@ -1,11 +1,5 @@
 #ifdef __cplusplus
 #include <QByteArray>
-#include <QDir>
-#include <QMainWindow>
-#include <QObject>
-#include <QQuickItem>
-#include <QSharedDataPointer>
-#include <QString>
 #include <QString>
 #include <QWidget>
 #include <QtEndian>
@@ -17,4 +11,6 @@
 #include <vector>
 #include <windows.h>
 #include <thread>
+#include <QIODevice>
+#include <filesystem>
 #endif
