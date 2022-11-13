@@ -1,21 +1,21 @@
 #ifndef USERINTERFACE_HPP
 #define USERINTERFACE_HPP
 
+#include <QMainWindow>
 
+QT_BEGIN_NAMESPACE
+namespace Ui { class userInterface; }
+QT_END_NAMESPACE
 
-class userInterfaceData;
-
-class userInterface
+class userInterface : public QMainWindow
 {
+  Q_OBJECT
 
 public:
-  userInterface();
-  userInterface(const userInterface &);
-  userInterface &operator=(const userInterface &);
+  userInterface(QWidget *parent = nullptr);
   ~userInterface();
 
 private:
-  QSharedDataPointer<userInterfaceData> data;
+  Ui::userInterface *ui;
 };
-
 #endif // USERINTERFACE_HPP

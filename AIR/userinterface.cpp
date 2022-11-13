@@ -1,30 +1,15 @@
 #include "userinterface.hpp"
+#include "ui_userinterface.h"
 
-class userInterfaceData : public QSharedData
+userInterface::userInterface(QWidget *parent)
+  : QMainWindow(parent)
+  , ui(new Ui::userInterface)
 {
-public:
-
-};
-
-userInterface::userInterface() : data(new userInterfaceData)
-{
-
-}
-
-userInterface::userInterface(const userInterface &rhs)
-  : data{rhs.data}
-{
-
-}
-
-userInterface &userInterface::operator=(const userInterface &rhs)
-{
-  if (this != &rhs)
-    data.operator=(rhs.data);
-  return *this;
+  ui->setupUi(this);
 }
 
 userInterface::~userInterface()
 {
-
+  delete ui;
 }
+
