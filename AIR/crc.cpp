@@ -115,7 +115,6 @@ void crc32File(std::string filename, QByteArray &data, quint32 &result){
   quint32 oldcrc32;
   oldcrc32 = 0xFFFFFFFF;
   std::ifstream file(filename,std::ios_base::binary);
-  std::cout << filename << std::endl;
   file.read((char*)&data[0],data.size());
   QByteArray::iterator it = data.begin();
   QByteArray::iterator it_end = data.end();
@@ -128,7 +127,6 @@ void crc32STR(std::string filename, quint32 &result){
   quint32 oldcrc32;
   oldcrc32 = 0xFFFFFFFF;
   std::ifstream file(filename,std::ios_base::binary);
-  std::cout << filename << std::endl;
   std::string::iterator it = filename.begin();
   std::string::iterator it_end = filename.end();
   for(;it!=it_end;++it)
