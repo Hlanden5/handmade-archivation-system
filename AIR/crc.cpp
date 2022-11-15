@@ -1,5 +1,6 @@
 //#pragma GCC target("avx,avx2,f16c,fma,sse3,ssse3,sse4.1,sse4.2")
 #include "crc.hpp"
+#include "qtextcodec.h"
 #include <string>
 
 /**********************************************************************\
@@ -133,5 +134,16 @@ void crc32STR(std::string filename, quint32 &result){
   for(;it!=it_end;++it)
     oldcrc32 = UPDC32(*it,oldcrc32);
   result = ~oldcrc32;
+}
+
+std::string Win1251toCP866(std::string str){
+  QString encoded=QString::fromLocal8Bit(str);
+  QTextCodec *win1251 = QTextCodec::codecForName("Windows-1251");
+  QTextCodec *cp866 = QTextCodec::codecForName("IBM 866");
+  QByteArray ba=encoded.toLocal8Bit();
+  QString st_utf=win1251->toUnicode(ba);
+  QByteArray ba866=cp866->fromUnicode(st_utf);
+  QString st866=QString::fromLocal8Bit(ba866.toStdString());
+  return std::string(st866.toLocal8Bit());
 }
 

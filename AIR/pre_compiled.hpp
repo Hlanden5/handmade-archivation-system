@@ -13,4 +13,5 @@
 #include <thread>
 #include <QIODevice>
 #include <filesystem>
+#include <QTextCodec>
 #endif

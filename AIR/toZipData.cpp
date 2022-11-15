@@ -37,14 +37,15 @@ std::string getNameOfFile(std::string path){
 }
 
 void data_::setPathOfZip(QString pathOfZip){
-  {
-    QString tmp_2;
-    std::string tmp(metainfo[0].name.toStdString());
-    tmp_2.push_back(QString::fromStdString(tmp.substr(tmp.find_last_of("/\\")+1)));
-    tmp_2.push_back(".zip");
-    tmp_2.push_front(pathOfZip);
-    this->pathOfZip = tmp_2;
-  }
+//  {
+//    QString tmp_2;
+//    std::string tmp(metainfo[0].name.toLocal8Bit());
+//    tmp_2.push_back(QString::fromStdString(tmp.substr(tmp.find_last_of("/\\")+1)));
+//    tmp_2.push_back(".zip");
+//    tmp_2.push_front(pathOfZip);
+//    this->pathOfZip = tmp_2;
+//  }
+  this->pathOfZip = pathOfZip;
   for(std::vector<metadata>::const_iterator c = metainfo.begin();c!=metainfo.end();c++){
       if(c->name == this->pathOfZip)
         metainfo.erase(c);
@@ -116,12 +117,12 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
           iter->cfh->comment = ""; // needs further implementation
 
           countCFH++;
-          sizeAllCFH += (sizeof(CentralFileHeader)-2+iter->cfh->sizeofNameFile+iter->cfh->sizeofComment-2*sizeof(std::string));
+          sizeAllCFH += (sizeof(CentralFileHeader)-3*sizeof(std::string)+iter->cfh->sizeofNameFile+iter->cfh->sizeofComment);
           if(!(i+1<metainfo.size()))
             offsetCFH = fileZip.tellp();
         }else{
-          //std::string tmp(metainfo[i].name.toUtf8());
-          std::string tmp(metainfo[i].name.toLocal8Bit());
+          std::string tmp(metainfo[i].name.toUtf8());
+          //std::string tmp(metainfo[i].name.toLocal8Bit());
           QByteArray data;
           size_t size = metainfo[i].sizeofFile;
           data.resize(size);
@@ -130,7 +131,7 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
           //          std::cout << "File : " << metainfo[i].name.toLocal8Bit().toStdString()
           //                    << "\tCRC-32 " << std::hex << iter->lfh->CRC_32_uncompress
           //                    << std::dec << std::endl;
-          iter->lfh->neededVersion = 0x0A00;
+          iter->lfh->neededVersion = 0x3800;
 
           std::bitset<sizeof(iter->lfh->flag)*8> flagBits;
           iter->lfh->flag = 0;
@@ -140,32 +141,34 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
 //                   << std::endl;
           if(metainfo[i].name.isValidUtf16()){ // need to check if UTF8
               flagBits.flip(11);
-              struct fileNameUTF8 filenameUTF;
-              filenameUTF.unicodeName = delMainPath(std::string(metainfo[i].name.toUtf8()));
-              filenameUTF.size = filenameUTF.unicodeName.size() + 9;
-              crc32STR(filenameUTF.unicodeName,filenameUTF.nameCRC32);
-              iter->lfh->additionalSizeof = filenameUTF.size;
-              iter->lfh->extraField = getUTF8(&filenameUTF);
-              iter->cfh->extraField = getUTF8(&filenameUTF);
-              iter->cfh->additionalSizeof = filenameUTF.size;
+//              struct fileNameUTF8 filenameUTF;
+//              filenameUTF.unicodeName = delMainPath(std::string(metainfo[i].name.toUtf8()));
+//              std::cout << 123 << ASCIIto1251(std::string(metainfo[i].name.toLocal8Bit())) << std::endl;
+//              filenameUTF.size = filenameUTF.unicodeName.size() + 9;
+//              crc32STR(filenameUTF.unicodeName,filenameUTF.nameCRC32);
+//              iter->lfh->additionalSizeof = filenameUTF.size;
+//              iter->lfh->extraField = getUTF8(&filenameUTF);
+//              iter->cfh->extraField = getUTF8(&filenameUTF);
+//              iter->cfh->additionalSizeof = filenameUTF.size;
             }
           // if()// need further implementation, check end of this file
-          iter->lfh->flag = flagBits.to_ullong();
+          iter->lfh->flag = flagBits.to_ulong();
           iter->lfh->methodOfCompress = 0;
           iter->lfh->timeOfLastEdit = metainfo[i].timeOfLastEdit;// needs further implementation
           iter->lfh->dataOfLastEdit = metainfo[i].dataOfLastEdit;// needs further implementation
           iter->lfh->compressSize = size;// needs further implementation
           iter->lfh->nonCompressSize = size;
           iter->lfh->additionalSizeof = 0; // needs further implementation
-          std::string nameOfFile = delMainPath(tmp);
+          std::string nameOfFile = delMainPath(Win1251toCP866(std::string(metainfo[i].name.toLocal8Bit())));
+          //std::string nameOfFile = delMainPath(ASCIIto1251(std::string(metainfo[i].name.toLocal8Bit())));
           iter->lfh->nameOfFile.swap(nameOfFile);
-          //iter->lfh->nameOfFile.swap(tmp);
+
           iter->lfh->sizeofNameFile = iter->lfh->nameOfFile.size();
 
           iter->cfh->offset = fileZip.tellp();
           iter->writeLFH(fileZip);
-
           fileZip.write(data.constData(),data.size());
+
 
           iter->cfh->versionDone = 0x0000;
           iter->cfh->neededVersion = iter->lfh->neededVersion;
@@ -186,15 +189,14 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
           iter->cfh->comment = ""; // needs further implementation
 
           countCFH++;
-          sizeAllCFH += (sizeof(CentralFileHeader)-2+iter->cfh->sizeofNameFile+iter->cfh->sizeofComment-2*sizeof(std::string));
-          if(!(i+1<metainfo.size()))
-            offsetCFH = fileZip.tellp();
+          sizeAllCFH += (sizeof(CentralFileHeader)-2+iter->cfh->sizeofNameFile+iter->cfh->sizeofComment-3*sizeof(std::string)+iter->cfh->extraField.size());
         }
       clock_t t1 = clock();
       std::cout << "Filename:" << std::string(metainfo[i].name.toUtf8()) << "\ttime: " << (double)(t1 - t0) / CLOCKS_PER_SEC << "\n";
     }
   struct endOfCentralDirectory eocd;
   iter = headerArray.begin();
+  offsetCFH = fileZip.tellp();
   for(size_t i=0;i<metainfo.size();i++,iter++)
     iter->writeCFH(fileZip);
   iter = headerArray.begin();
@@ -202,6 +204,7 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
   eocd.numberOfDriveCFH = 0; // needs further implementation
   eocd.countOfCFH_onThisDrive = countCFH; // needs further implementation
   eocd.countOfCFH = countCFH; // needs further implementation
+  std::cout << "CFH SIZE " << sizeAllCFH << std::endl;
   eocd.sizeofCFH = sizeAllCFH; // needs further implementation
   eocd.offsetCFH_ofStartArchive = offsetCFH;
   eocd.sizeofComment = 0; // needs further implementation

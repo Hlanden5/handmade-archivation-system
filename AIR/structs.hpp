@@ -9,6 +9,7 @@ struct metadata{
   bool is_directory;
 };
 
+#pragma pack(push, 2)
 struct CentralFileHeader{
   const quint32 cfh_signature = 0x02014b50;
   quint16 versionDone;
@@ -31,7 +32,7 @@ struct CentralFileHeader{
   std::string extraField;
   std::string comment;
 };
-
+#pragma pack(pop)
 /*
 struct dataDescriptor{
   qint64 CRC_32;

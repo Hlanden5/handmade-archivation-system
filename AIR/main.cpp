@@ -13,9 +13,7 @@ int main(int argc, char *argv[])
   std::cout.tie(0);
   clock_t t0 = clock();
   //setlocale(0,"");
-  SetConsoleOutputCP(CP_UTF8);
-  std::cout <<  GetConsoleOutputCP() << std::endl;
-
+  SetConsoleOutputCP(1251);
   data_ test;
   QString path;
   path.push_back("D:\\Labs\\");
