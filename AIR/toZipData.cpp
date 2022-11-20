@@ -2,30 +2,18 @@
 #include "crc.hpp"
 #include "structs.hpp"
 
-data_::data_()
+toZip::toZip()
 {
 }
 
-data_::~data_()
+toZip::~toZip()
 {
 }
 
-bool data_::isUtf_8(std::string toCheck){
-  std::string tmp("ÀÁÂÃÄÅ¨ÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäå¸æçèéêëìíîïğñòóôõö÷øùúûüışÿ");
-  for(const auto &c:toCheck){
-      if(tmp.find(c)!=std::string::npos)
-        return true;
-    }
-  return false;
-}
-
-void data_::setPathOfFiles(QString pathOfFiles){
-  clock_t t0 = clock();
+void toZip::setPathOfFiles(QString pathOfFiles){
   filesMetadata tmp;
   tmp.setPath(pathOfFiles);
   tmp.collectData();
-  clock_t t1 = clock();
-  std::cout << "time: " << (double)(t1 - t0) / CLOCKS_PER_SEC << "\n";
   //tmp.printMetadata();//test
 
   metainfo.swap(tmp.getMetadata());
@@ -40,7 +28,7 @@ std::string getNameOfFile(std::string path){
   return tmp;
 }
 
-void data_::setPathOfZip(QString pathOfZip){
+void toZip::setPathOfZip(QString pathOfZip){
   {
     QString tmp_2;
     std::string tmp(metainfo[0].name.toLocal8Bit());
@@ -60,11 +48,11 @@ void data_::setPathOfZip(QString pathOfZip){
     throw;
 }
 
-std::string data_::delMainPath(std::string path){
+std::string toZip::delMainPath(std::string path){
   return path.erase(0,pathOfFiles.size());
 }
 
-void data_::collectAndLoadData(){ // tmp realisation, needs repair
+void toZip::collectAndLoadData(){ // tmp realisation, needs repair
   std::vector<structs>::iterator it = headerArray.begin();
   std::vector<metadata>::iterator metainfo_it = metainfo.begin();
   std::vector<metadata>::iterator metainfo_end = metainfo.end();
@@ -180,8 +168,8 @@ void data_::collectAndLoadData(){ // tmp realisation, needs repair
   //std::cout << "CFH SIZE " << sizeAllCFH << std::endl;
   eocd.sizeofCFH = sizeAllCFH; // needs further implementation
   eocd.offsetCFH_ofStartArchive = offsetCFH;
-  eocd.sizeofComment = 0; // needs further implementation
   eocd.comment = ""; // needs further implementation
+  eocd.sizeofComment = 0; // needs further implementation
 
   writeEOCD(fileZip,&eocd);
   fileZip.close();

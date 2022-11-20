@@ -102,7 +102,7 @@ void filesMetadata::printMetadata(){
   std::vector<metadata>::iterator iter = metainfo.begin();
   for(;iter!=metainfo.end();iter++){
       std::cout << "\n";
-      std::cout << "filename = " << std::string(iter->name.toUtf8())
+      std::cout << "filename = " << std::string(iter->name.toLocal8Bit())
                 << "\nsize of file = " << iter->sizeofFile
                 << "\ndirectory status(" << (iter->is_directory ? "YES)" : "NO)")
                 << "\ntime of last edit(MS-DOS) " << iter->timeOfLastEdit

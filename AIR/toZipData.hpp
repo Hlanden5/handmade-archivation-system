@@ -3,7 +3,7 @@
 #include "structs.hpp"
 #include "filemetadata.hpp"
 
-class data_ : private structs
+class toZip : private structs
 {
     QString pathOfZip;
     QString pathOfFiles;
@@ -14,9 +14,9 @@ class data_ : private structs
     bool isUtf_8(std::string toCheck);
 public:
 
-    data_();
+    toZip();
 
-    ~data_();
+    ~toZip();
 
     void setPathOfFiles(QString pathOfFiles);
 

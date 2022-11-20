@@ -5,9 +5,9 @@
 class toUnzipData
 {
   QString pathOfZip;
-  std::vector<QString> pathOfFiles;
-  std::ofstream fileZip;
-  structs *headerArray;
+  QString pathOfFiles;
+  std::ifstream fileZip;
+  std::vector <structs> headerArray;
 public:
     toUnzipData();
 };
