@@ -9,10 +9,14 @@ class toUnzipData : private structs
     std::ifstream fileZip;
     std::vector <structs> headerArray;
     struct endOfCentralDirectory eocd;
+    std::string data;
 public:
     toUnzipData();
     ~toUnzipData();
-    size_t findEOCD(std::string &signature);
+    size_t findEOCD();
+    void setData(QString &pathOfZip,QString &pathOfFiles);
+    void getDataFromZip();
+    void setEOCD();
 };
 
 
@@ -20,7 +24,7 @@ public:
 
 //struct endOfCentralDirectoryRecord
 //{
-//    uint   header;                // Header of end central directory record, always equals 0x06054b50
+//       uint   header;                // Header of end central directory record, always equals 0x06054b50
 //       ushort disk_number;           // Number of this disk
 //       ushort disk_number_cd;        // Number of the disk with the start of the central directory
 //       ushort total_entries_disk;    // Total number of entries in the central directory on this disk
