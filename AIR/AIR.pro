@@ -2,6 +2,7 @@ QT += core gui
 QT += core5compat
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+CONFIG+=ccache
 CONFIG += c++17
 PRECOMPILED_HEADER = pre_compiled.hpp
 # You can make your code fail to compile if it uses deprecated APIs.
