@@ -15,6 +15,7 @@ public:
     ~toUnzipData();
     size_t findEOCD();
     void setData(QString &pathOfZip,QString &pathOfFiles);
+    void findAllSignatures(std::vector<size_t> &LFH, std::vector<size_t> &CFH, size_t& EOCD);
     void getDataFromZip();
     void setEOCD();
 };
