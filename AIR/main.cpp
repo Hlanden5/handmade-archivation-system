@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
   QString x = QString::fromLocal8Bit("D:\\AIR\\Labs.zip");
   QString y = QString::fromLocal8Bit("D:\\AIR");
   test.setData(x,y);
-  test.findEOCD();
+  //test.findEOCD();
   std::cout << (std::cout.tellp()==-1 ? "" :"\n\n\n") << "Successful archivation!" << std::endl;
   clock_t t1 = clock();
   std::cout << std::setprecision(10) <<"time: " << double((double)(t1 - t0) / CLOCKS_PER_SEC) << std::endl;
