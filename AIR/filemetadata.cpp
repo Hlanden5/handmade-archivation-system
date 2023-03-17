@@ -111,4 +111,23 @@ void filesMetadata::printMetadata(){
     }
 }
 
+time_t dos2unixtime(quint16 &timeResult, quint16 &dateResult) {
+    struct tm t;
+
+    // Extract time values from DOS timestamp
+    t.tm_sec = (timeResult & 0x1F) * 2;
+    t.tm_min = (timeResult >> 5) & 0x3F;
+    t.tm_hour = (timeResult >> 11) & 0x1F;
+
+    // Extract date values from DOS timestamp
+    t.tm_mday = dateResult & 0x1F;
+    t.tm_mon = ((dateResult >> 5) & 0x0F) - 1;
+    t.tm_year = ((dateResult >> 9) & 0x7F) + 80;
+
+    // Convert to Unix timestamp
+    time_t unixtime = mktime(&t);
+
+    return unixtime;
+}
+
 

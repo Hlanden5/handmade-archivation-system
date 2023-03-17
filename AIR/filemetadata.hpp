@@ -25,6 +25,6 @@ public:
 
   void printMetadata();
 
-
+  static time_t dos2unixtime(quint16 &timeResult, quint16 &dateResult);
 };
 
