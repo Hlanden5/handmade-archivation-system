@@ -15,7 +15,7 @@ SOURCES += \
     main.cpp \
     structs.cpp \
     toZipData.cpp \
-    tounzipdata.cpp \
+    toUnzipData.cpp \
     userinterface.cpp \
     zipcontroller.cpp
 
@@ -25,7 +25,7 @@ HEADERS += \
     pre_compiled.hpp \
     structs.hpp \
     toZipData.hpp \
-    tounzipdata.hpp \
+    toUnzipData.hpp \
     userinterface.hpp \
     zipcontroller.hpp
 

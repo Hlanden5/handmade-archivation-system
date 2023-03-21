@@ -1,6 +1,6 @@
 #include "crc.hpp"
 #include "structs.hpp"
-#include "tounzipdata.hpp"
+#include "toUnzipData.hpp"
 
 
 int findASCII(char data){

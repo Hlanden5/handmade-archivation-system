@@ -2,5 +2,4 @@
 
 zipController::zipController()
 {
-
 }
