@@ -5,9 +5,9 @@
 
 int main(int argc, char *argv[])
 {
-  QApplication a(argc, argv);
-  userInterface w;
-  w.show();
+  //QApplication a(argc, argv);
+  //userInterface w;
+  //w.show();
 
   std::ios::sync_with_stdio(false);
   std::cin.tie(0);
@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 //  test.setPathOfZip("D:\\AIR\\");
 //  test.collectAndLoadData();
   toUnzipData test;
-  QString x = QString::fromLocal8Bit("D:\\AIR\\Labs.zip");
+  QString x = QString::fromLocal8Bit("D:\\AIR\\input.zip");
   QString y = QString::fromLocal8Bit("D:\\AIR");
   test.setData(x,y);
   //test.findEOCD();
@@ -30,5 +30,5 @@ int main(int argc, char *argv[])
   clock_t t1 = clock();
   std::cout << std::setprecision(10) <<"time: " << double((double)(t1 - t0) / CLOCKS_PER_SEC) << std::endl;
   return 0;
-  return a.exec();
+  //return a.exec();
 }

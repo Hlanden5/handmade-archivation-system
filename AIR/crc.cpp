@@ -1,7 +1,5 @@
 //#pragma GCC target("avx,avx2,f16c,fma,sse3,ssse3,sse4.1,sse4.2")
 #include "crc.hpp"
-#include "qtextcodec.h"
-#include <string>
 
 /**********************************************************************\
 |* Demonstration program to compute the 32-bit CRC used as the frame  *|
