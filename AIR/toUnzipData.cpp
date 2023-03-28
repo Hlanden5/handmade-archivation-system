@@ -11,14 +11,14 @@ int findASCII(char data){
         return i;
     }
 
-  return 0; // Withour warning
+  return 0; // Without warning
 }
 
-quint16 pack16(std::vector<char> vec){
+quint16 pack16REV(std::vector<char> vec){
   std::string str(vec.begin(), vec.end());
   reverse(str.begin(),str.end());
-  static quint16 result = 0;
-  static std::stringstream stream1,stream2;
+  quint16 result = 0;
+  std::stringstream stream1,stream2;
   stream2 << "0x";
 
   for(int i=0;i<2;i++){
@@ -29,21 +29,22 @@ quint16 pack16(std::vector<char> vec){
       stream1.str("");
       stream2 << tmp;
     }
+
   stream2 >> std::hex >> result;
   return result;
 }
 
-quint32 pack32(std::vector<char> vec){
+quint32 pack32REV(std::vector<char> vec){
   std::string str(vec.begin(), vec.end());
   reverse(str.begin(),str.end());
-  static quint16 result = 0;
-  static std::stringstream stream1,stream2;
+  quint32 result = 0;
+  std::stringstream stream1,stream2;
   stream2 << "0x";
 
   for(int i=0;i<4;i++){
       stream1 << std::hex << findASCII(str[i]);
       std::string tmp = stream1.str();
-      if(tmp.size()>2) // maybe problem here, needed tests
+      if(tmp.size()>2)
         tmp.erase(0,6);
       stream1.str("");
       stream2 << tmp;
@@ -87,31 +88,31 @@ void toUnzipData::setLFH(std::vector<size_t>& indicesLFH){
       parts.push_back(data[index]);
       parts.push_back(data[index+1]);
       index+=2;
-      iter->lfh->neededVersion = pack16(parts);
+      iter->lfh->neededVersion = pack16REV(parts);
       parts.clear();
 
       parts.push_back(data[index]);
       parts.push_back(data[index+1]);
       index+=2;
-      iter->lfh->flag = pack16(parts);
+      iter->lfh->flag = pack16REV(parts);
       parts.clear();
 
       parts.push_back(data[index]);
       parts.push_back(data[index+1]);
       index+=2;
-      iter->lfh->methodOfCompress = pack16(parts);
+      iter->lfh->methodOfCompress = pack16REV(parts);
       parts.clear();
 
       parts.push_back(data[index]);
       parts.push_back(data[index+1]);
       index+=2;
-      iter->lfh->timeOfLastEdit = pack16(parts);
+      iter->lfh->dataOfLastEdit = pack16REV(parts);
       parts.clear();
 
       parts.push_back(data[index]);
       parts.push_back(data[index+1]);
       index+=2;
-      iter->lfh->dataOfLastEdit = pack16(parts);
+      iter->lfh->timeOfLastEdit = pack16REV(parts);
       parts.clear();
 
       parts.push_back(data[index]);
@@ -119,7 +120,7 @@ void toUnzipData::setLFH(std::vector<size_t>& indicesLFH){
       parts.push_back(data[index+2]);
       parts.push_back(data[index+3]);
       index+=4;
-      iter->lfh->CRC_32_uncompress = pack32(parts);
+      iter->lfh->CRC_32_uncompress = pack32REV(parts);
       parts.clear();
 
       parts.push_back(data[index]);
@@ -127,7 +128,7 @@ void toUnzipData::setLFH(std::vector<size_t>& indicesLFH){
       parts.push_back(data[index+2]);
       parts.push_back(data[index+3]);
       index+=4;
-      iter->lfh->compressSize = pack32(parts);
+      iter->lfh->compressSize = pack32REV(parts);
       parts.clear();
 
       parts.push_back(data[index]);
@@ -135,19 +136,19 @@ void toUnzipData::setLFH(std::vector<size_t>& indicesLFH){
       parts.push_back(data[index+2]);
       parts.push_back(data[index+3]);
       index+=4;
-      iter->lfh->nonCompressSize = pack32(parts);
+      iter->lfh->nonCompressSize = pack32REV(parts);
       parts.clear();
 
       parts.push_back(data[index]);
       parts.push_back(data[index+1]);
       index+=2;
-      iter->lfh->sizeofNameFile = pack16(parts);
+      iter->lfh->sizeofNameFile = pack16REV(parts);
       parts.clear();
 
       parts.push_back(data[index]);
       parts.push_back(data[index+1]);
       index+=2;
-      iter->lfh->additionalSizeof = pack16(parts);
+      iter->lfh->additionalSizeof = pack16REV(parts);
       parts.clear();
 
       //namefile here
@@ -179,52 +180,54 @@ void toUnzipData::setCFH(std::vector<size_t>& indicesCFH){
   size_t i = 0;
   for(size_t index;iter!=headerArray.end();iter++,i++){
       index = indicesCFH[i];
-      iter->cfh->versionDone = pack16(std::vector<char>({data[index], data[index+1]}));
-      index += 2;
-
-      iter->cfh->neededVersion = pack16(std::vector<char>({data[index], data[index+1]}));
-      index += 2;
-
-      iter->cfh->flag = pack16(std::vector<char>({data[index], data[index+1]}));
-      index += 2;
-
-      iter->cfh->methodOfCompress = pack16(std::vector<char>({data[index], data[index+1]}));
-      index += 2;
-
-      iter->cfh->timeOfLastEdit = pack16(std::vector<char>({data[index], data[index+1]}));
-      index += 2;
-
-      iter->cfh->dataOfLastEdit = pack16(std::vector<char>({data[index], data[index+1]}));
-      index += 2;
-
-      iter->cfh->CRC_32_uncompress = pack32(std::vector<char>({data[index], data[index+1], data[index+2], data[index+3]}));
       index += 4;
 
-      iter->cfh->compressSize = pack32(std::vector<char>({data[index], data[index+1], data[index+2], data[index+3]}));
+      iter->cfh->versionDone = pack16REV(std::vector<char>({data[index], data[index+1]}));
+      index += 2;
+
+      iter->cfh->neededVersion = pack16REV(std::vector<char>({data[index], data[index+1]}));
+      index += 2;
+
+      iter->cfh->flag = pack16REV(std::vector<char>({data[index], data[index+1]}));
+      index += 2;
+
+      iter->cfh->methodOfCompress = pack16REV(std::vector<char>({data[index], data[index+1]}));
+      index += 2;
+
+      iter->cfh->dataOfLastEdit = pack16REV(std::vector<char>({data[index], data[index+1]}));
+      index += 2;
+
+      iter->cfh->timeOfLastEdit = pack16REV(std::vector<char>({data[index], data[index+1]}));
+      index += 2;
+
+      iter->cfh->CRC_32_uncompress = pack32REV(std::vector<char>({data[index], data[index+1], data[index+2], data[index+3]}));
       index += 4;
 
-      iter->cfh->nonCompressSize = pack32(std::vector<char>({data[index], data[index+1], data[index+2], data[index+3]}));
+      iter->cfh->compressSize = pack32REV(std::vector<char>({data[index], data[index+1], data[index+2], data[index+3]}));
       index += 4;
 
-      iter->cfh->sizeofNameFile = pack16(std::vector<char>({data[index], data[index+1]}));
-      index += 2;
-
-      iter->cfh->additionalSizeof = pack16(std::vector<char>({data[index], data[index+1]}));
-      index += 2;
-
-      iter->cfh->sizeofComment = pack16(std::vector<char>({data[index], data[index+1]}));
-      index += 2;
-
-      iter->cfh->numberOfDrive = pack16(std::vector<char>({data[index], data[index+1]}));
-      index += 2;
-
-      iter->cfh->internalAttributes = pack16(std::vector<char>({data[index], data[index+1]}));
-      index += 2;
-
-      iter->cfh->externalAttributes = pack32(std::vector<char>({data[index], data[index+1], data[index+2], data[index+3]}));
+      iter->cfh->nonCompressSize = pack32REV(std::vector<char>({data[index], data[index+1], data[index+2], data[index+3]}));
       index += 4;
 
-      iter->cfh->offset = pack32(std::vector<char>({data[index], data[index+1], data[index+2], data[index+3]}));
+      iter->cfh->sizeofNameFile = pack16REV(std::vector<char>({data[index], data[index+1]}));
+      index += 2;
+
+      iter->cfh->additionalSizeof = pack16REV(std::vector<char>({data[index], data[index+1]}));
+      index += 2;
+
+      iter->cfh->sizeofComment = pack16REV(std::vector<char>({data[index], data[index+1]}));
+      index += 2;
+
+      iter->cfh->numberOfDrive = pack16REV(std::vector<char>({data[index], data[index+1]}));
+      index += 2;
+
+      iter->cfh->internalAttributes = pack16REV(std::vector<char>({data[index], data[index+1]}));
+      index += 2;
+
+      iter->cfh->externalAttributes = pack32REV(std::vector<char>({data[index], data[index+1], data[index+2], data[index+3]}));
+      index += 4;
+
+      iter->cfh->offset = pack32REV(std::vector<char>({data[index], data[index+1], data[index+2], data[index+3]}));
       index += 4;
 
       // Store file name if it exists
@@ -257,30 +260,31 @@ void toUnzipData::setCFH(std::vector<size_t>& indicesCFH){
 }
 
 void toUnzipData::setEOCD(size_t index){
-
-  eocd.numberOfDrive = pack16(std::vector<char>({data[index], data[index+1]}));
-  index += 2;
-
-  eocd.numberOfDriveCFH = pack16(std::vector<char>({data[index], data[index+1]}));
-  index += 2;
-
-  eocd.countOfCFH_onThisDrive = pack16(std::vector<char>({data[index], data[index+1]}));
-  index += 2;
-
-  eocd.countOfCFH = pack16(std::vector<char>({data[index], data[index+1]}));
-  index += 2;
-
-  eocd.sizeofCFH = pack16(std::vector<char>({data[index], data[index+1]}));
-  index += 2;
-
-  eocd.offsetCFH_ofStartArchive = pack32(std::vector<char>({data[index], data[index+1], data[index+2], data[index+3]}));
   index += 4;
 
-  eocd.sizeofComment = pack16(std::vector<char>({data[index], data[index+1]}));
+  eocd.numberOfDrive = pack16REV(std::vector<char>({data[index], data[index+1]}));
+  index += 2;
+
+  eocd.numberOfDriveCFH = pack16REV(std::vector<char>({data[index], data[index+1]}));
+  index += 2;
+
+
+  eocd.countOfCFH_onThisDrive = pack16REV(std::vector<char>({data[index], data[index+1]}));
+  index += 2;
+
+  eocd.countOfCFH = pack16REV(std::vector<char>({data[index], data[index+1]}));
+  index += 2;
+
+  eocd.sizeofCFH = pack16REV(std::vector<char>({data[index], data[index+1]}));
+  index += 2;
+
+  eocd.offsetCFH_ofStartArchive = pack32REV(std::vector<char>({data[index], data[index+1], data[index+2], data[index+3]}));
+  index += 4;
+
+  eocd.sizeofComment = pack16REV(std::vector<char>({data[index], data[index+1]}));
   index += 2;
 
   // Store EOCD comment if it exists
-  std::cout << eocd.sizeofComment << std::endl;
   if (eocd.sizeofComment > 0) {
       eocd.comment.resize(eocd.sizeofComment);
       for (size_t i = 0; i < eocd.sizeofComment; i++) {
@@ -298,7 +302,7 @@ void toUnzipData::findAllSignatures(std::vector<size_t> &LFH, std::vector<size_t
   CFH.clear();
   EOCD = 0;
   std::vector<size_t> eocd_index;
-
+  clock_t R1 = clock();
   { // EOCD
     std::string rt("PK");
     rt += 0x05;
@@ -310,13 +314,15 @@ void toUnzipData::findAllSignatures(std::vector<size_t> &LFH, std::vector<size_t
     //    std::cout << "Found EOCD "
     //              << std::distance(begin, end) << std::endl;
 
-
+    clock_t R3 = clock();
+    std::smatch match;
     for (std::sregex_iterator i = begin; i != end; ++i) {
-        std::smatch match = *i;
+        match = *i;
         eocd_index.push_back(match.position());
+        std::cout << "Time regex for : " << (clock()-R3)/1000 << std::endl;
       }
   } // END EOCD
-
+  std::cout << "Time regex EOCD : " << (clock()-R1)/1000 << std::endl;
 
   { // LFH
     std::string rt("PK");
@@ -335,7 +341,7 @@ void toUnzipData::findAllSignatures(std::vector<size_t> &LFH, std::vector<size_t
         LFH.push_back(match.position());
       }
   } // END LFH
-
+  std::cout << "Time regex LFH + EOCD : " << (clock()-R1)/1000 << std::endl;
 
   { // CFH
     std::string rt("PK");
@@ -354,7 +360,7 @@ void toUnzipData::findAllSignatures(std::vector<size_t> &LFH, std::vector<size_t
         CFH.push_back(match.position());
       }
   } // END CFH
-
+  std::cout << "Time regex ALL : " << (clock()-R1)/1000 << std::endl;
 
   //  std::cout << "EOCD finded:" << std::endl;
   //  for (auto c:eocd_index){
