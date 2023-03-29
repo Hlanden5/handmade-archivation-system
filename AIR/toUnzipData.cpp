@@ -1,5 +1,4 @@
 #include "crc.hpp"
-#include "qtypes.h"
 #include "structs.hpp"
 #include "toUnzipData.hpp"
 
@@ -75,6 +74,9 @@ void toUnzipData::collectAndLoadData(){
   std::cout << "setLFH complete" << std::endl;
   setCFH(indicesCFH);
   std::cout << "setCFH complete" << std::endl;
+  std::sort(headerArray.begin(),headerArray.end(),[](structs& first,structs& second){
+    return (first.cfh->nameOfFile>second.cfh->nameOfFile);
+  });
   debug("D:\\OPD\\debugOUT.txt",eocd);
 }
 
@@ -487,8 +489,8 @@ void toUnzipData::getDataFromZip(){
 void toUnzipData::debug(std::string path,struct endOfCentralDirectory eocd){
   using std::endl;
   std::ofstream debugger(path, std::ofstream::trunc);
-  size_t index = 0;
   for(size_t i=0;i<headerArray.size();i++){
+      size_t index = i;
       debugger << endl
                << "LFH with index: " << index << endl
                << "Needed version: " << headerArray[index].lfh->neededVersion << endl
