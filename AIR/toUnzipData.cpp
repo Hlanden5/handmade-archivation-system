@@ -1,6 +1,7 @@
 #include "crc.hpp"
 #include "structs.hpp"
 #include "toUnzipData.hpp"
+#include <algorithm>
 
 int findASCII(char data){
 
@@ -77,6 +78,7 @@ void toUnzipData::collectAndLoadData(){
   std::sort(headerArray.begin(),headerArray.end(),[](structs& first,structs& second){
     return (first.cfh->nameOfFile>second.cfh->nameOfFile);
   });
+  std::cout << "complete" << std::endl;
   debug("D:\\OPD\\debugOUT.txt",eocd);
 }
 
@@ -298,13 +300,12 @@ void toUnzipData::setEOCD(size_t index){
 }
 
 void toUnzipData::findAllSignatures(std::vector<size_t> &LFH, std::vector<size_t> &CFH, size_t& EOCD){
-
   getDataFromZip();//DELETE THIS
   LFH.clear();
   CFH.clear();
   EOCD = 0;
   std::vector<size_t> eocd_index;
-  clock_t R1 = clock();
+  //clock_t R1 = clock();
   { // EOCD
     std::string rt("PK");
     rt += 0x05;
@@ -319,12 +320,11 @@ void toUnzipData::findAllSignatures(std::vector<size_t> &LFH, std::vector<size_t
     clock_t R3 = clock();
     std::smatch match;
     for (std::sregex_iterator i = begin; i != end; ++i) {
-        match = *i;
+        std::smatch match = *i;
         eocd_index.push_back(match.position());
-        std::cout << "Time regex for : " << (clock()-R3)/1000 << std::endl;
+        //std::cout << "Time regex for : " << (clock()-R3)/1000 << std::endl;
       }
   } // END EOCD
-  std::cout << "Time regex EOCD : " << (clock()-R1)/1000 << std::endl;
 
   { // LFH
     std::string rt("PK");
@@ -343,7 +343,7 @@ void toUnzipData::findAllSignatures(std::vector<size_t> &LFH, std::vector<size_t
         LFH.push_back(match.position());
       }
   } // END LFH
-  std::cout << "Time regex LFH + EOCD : " << (clock()-R1)/1000 << std::endl;
+  //std::cout << "Time regex LFH + EOCD : " << (clock()-R1)/1000 << std::endl;
 
   { // CFH
     std::string rt("PK");
@@ -362,27 +362,28 @@ void toUnzipData::findAllSignatures(std::vector<size_t> &LFH, std::vector<size_t
         CFH.push_back(match.position());
       }
   } // END CFH
-  std::cout << "Time regex ALL : " << (clock()-R1)/1000 << std::endl;
-
-  //  std::cout << "EOCD finded:" << std::endl;
-  //  for (auto c:eocd_index){
-  //      std::cout << c << std::endl;
-  //    }
-  //  std::cout << std::endl;
-
-  //  std::cout << "LFH finded:" << std::endl;
-  //  for (auto c:LFH){
-  //      std::cout << c << std::endl;
-  //    }
-  //  std::cout << std::endl;
+  //std::cout << "Time regex ALL0 : " /*<< (clock()-R1)/1000*/ << std::endl;
 
 
-  //  std::cout << "CFH finded:" << std::endl;
-  //  for (auto c:CFH){
-  //      std::cout << c << std::endl;
-  //    }
-  //  std::cout << std::endl;
-  //  std::cout<<eocd_index.size()<<std::endl;
+//  std::cout << "EOCD finded:" << std::endl;
+//  for (auto c:eocd_index){
+//      std::cout << c << std::endl;
+//    }
+//  std::cout << std::endl;
+
+//  std::cout << "LFH finded:" << std::endl;
+//  for (auto c:LFH){
+//      std::cout << c << std::endl;
+//    }
+//  std::cout << std::endl;
+
+
+//  std::cout << "CFH finded:" << std::endl;
+//  for (auto c:CFH){
+//      std::cout << c << std::endl;
+//    }
+//  std::cout << std::endl;
+//  std::cout<<eocd_index.size()<<std::endl;
 
   while(eocd_index.size()>1){
       size_t pos = eocd_index[0]+8;
@@ -402,68 +403,35 @@ void toUnzipData::findAllSignatures(std::vector<size_t> &LFH, std::vector<size_t
         }
 
       stream2 >> std::hex >> count_;
-      //std::cout << count_ << std::endl;
-
-      size_t max = 0;
-      size_t index = 0;
-      for(size_t i=0;i<CFH.size();i++){
-          if(CFH[i]>max and CFH[i]<pos){
-              max = CFH[i];
-              index = i;
+      if(count_!=0){
+          std::vector<size_t> iterators;
+          auto iterCFH = CFH.end();
+          size_t tmp = count_;
+          for(;tmp!=0;iterCFH--){
+              if(*iterCFH<eocd_index[0]){
+                  tmp--;
+                  iterators.push_back(*iterCFH);
+                }
             }
+
+          std::vector<size_t> iterators2;
+          auto iterLFH = LFH.end();
+          tmp = count_;
+          for(;tmp!=0;iterLFH--){
+              if(*iterLFH<iterators[0]){
+                  tmp--;
+                  iterators2.push_back(*iterLFH);
+                }
+            }
+
+          for(auto &c:iterators)
+            CFH.erase(std::remove(CFH.begin(), CFH.end(), c), CFH.end());
+          for(auto &c:iterators2)
+            LFH.erase(std::remove(LFH.begin(), LFH.end(), c), LFH.end());
         }
-
-
-      std::vector<size_t>::iterator startCHF, startLFH;
-      startLFH=LFH.begin();
-      startCHF=CFH.begin();
-      for(size_t i=index;i<index-count_;i--){
-          std::advance(startLFH,i);
-          std::advance(startCHF,i);
-          LFH.erase(startLFH);
-          CFH.erase(startCHF);
-        }
-
       eocd_index.erase(eocd_index.begin());
     }
-  //std::cout << "ERASE, max = " << std::endl;
-
-  //      std::cout << "LFH:" << std::endl;
-  //      for (auto c:LFH){
-  //          std::cout << c << std::endl;
-  //        }
-
-  //      std::cout << std::endl;
-
-  //      std::cout << "CFH:" << std::endl;
-  //      for (auto c:CFH){
-  //          std::cout << c << std::endl;
-
-  //        }
-
-  //    }
-
-
-
-  //  std::cout << "EOCD finded:" << std::endl;
-  //  for (auto c:eocd_index){
-  //      std::cout << c << std::endl;
-  //    }
-
   EOCD = eocd_index[0];
-  //  std::cout << std::endl;
-
-  //  std::cout << "LFH finded:" << std::endl;
-  //  for (auto c:LFH){
-  //      std::cout << c << std::endl;
-  //    }
-
-  //  std::cout << std::endl;
-  //  std::cout << "CFH finded:" << std::endl;
-  //  for (auto c:CFH){
-  //      std::cout << c << std::endl;
-  //    }
-
 }
 
 void toUnzipData::setData(QString &pathOfZip,QString &pathOfFiles){
@@ -482,7 +450,6 @@ void toUnzipData::getDataFromZip(){
   fileZip.seekg(0,std::ios::beg);
   data.resize(len_input);
   fileZip.read((char*)&data[0],len_input);
-  // if(fileZip.good()) std::cout << data << std::endl;
   fileZip.close();
 }
 
