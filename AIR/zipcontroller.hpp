@@ -26,9 +26,15 @@ class zipController
 public:
   zipController();
 
+  int setData(QString PathOfZip, QString PathOfFiles);
+
   int dataFromZip(); // Int for errors
 
-  void setDeflate(bool deflate = false);
-  //int
+  int multipleUnArch(QString directory);
 
+  int loadDataToZip();
+
+  size_t sizeOfDir(QString directory);
+
+  size_t countFilesOfDir(QString directory);
 };
