@@ -19,16 +19,12 @@ class zipController
    * pathOfZip = pathOfZip
    * pathOfFiles = exporting files to pathOfFiles
   */
-
-  bool isDeflate;
-
-  bool checkIfDir();
 public:
   zipController();
 
   int dataFromZip(); // Int for errors
 
-  void setDeflate(bool deflate = false);
-  //int
-
+  int dataToZip();
+  
+  int dataFromMulZip();
 };
