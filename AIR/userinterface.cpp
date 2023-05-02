@@ -30,6 +30,7 @@ void userInterface::on_language_clicked()
         ui->input->setText(RIn);
         ui->output->setText(ROut);
         ui->label->setText(RLab);
+        ui->back->setText(RBack);
         Lan=false;
     }
     else
@@ -41,6 +42,7 @@ void userInterface::on_language_clicked()
         ui->input->setText(EIn);
         ui->output->setText(EOut);
         ui->label->setText(ELab);
+        ui->back->setText(EBack);
         Lan=true;
     }
 
@@ -51,12 +53,41 @@ void userInterface::on_language_clicked()
 
 void userInterface::on_input_clicked()
 {
-    QString input_file = QFileDialog::getOpenFileName(0,QObject::tr("Укажите файл"),QDir::homePath(), QObject::tr("Все файлы (*.*)"));
+    input_file = QFileDialog::getOpenFileName(0,QObject::tr("Укажите файл"),QDir::homePath(), QObject::tr("Все файлы (*.*)"));
 }
 
 
 void userInterface::on_output_clicked()
 {
-    QString output_file = QFileDialog::getOpenFileName(0,QObject::tr("Укажите файл"),QDir::homePath(), QObject::tr("Все файлы (*.*)"));
+    output_file = QFileDialog::getOpenFileName(0,QObject::tr("Укажите файл"),QDir::homePath(), QObject::tr("Все файлы (*.*)"));
+}
+
+
+void userInterface::on_mono_arch_clicked()
+{
+    ui->input->show();
+    ui->output->show();
+    ui->label->show();
+    ui->back->show();
+}
+
+
+void userInterface::on_unarch_clicked()
+{
+    ui->back->show();
+    ui->input->show();
+    ui->output->show();
+    ui->label->show();
+}
+
+
+void userInterface::on_back_clicked()
+{
+    ui->back->hide();
+    ui->input->hide();
+    ui->output->hide();
+    ui->label->hide();
+    input_file.clear();
+    output_file.clear();
 }
 

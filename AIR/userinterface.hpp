@@ -14,6 +14,7 @@ class userInterface : public QMainWindow
 public:
   userInterface(QWidget *parent = nullptr);
   ~userInterface();
+    QString RBack = "Назад";
     QString RLab = "Выберите ваши Файлы";
     QString RIn = "Ввод";
     QString ROut = "Вывод";
@@ -27,7 +28,10 @@ public:
     QString EPoly = "Multiple archiving";
     QString EMono = "Archiving";
     QString ELanguage = "English";
+    QString EBack = "Back";
     QString EUn = "Unarchiving";
+    QString input_file;
+    QString output_file;
     bool Lan = true;
 
 private slots:
@@ -38,6 +42,12 @@ private slots:
   void on_input_clicked();
 
   void on_output_clicked();
+
+  void on_mono_arch_clicked();
+
+  void on_unarch_clicked();
+
+  void on_back_clicked();
 
 private:
   Ui::userInterface *ui;
